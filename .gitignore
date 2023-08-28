@@ -44,7 +44,8 @@ app.*.map.json
 /android/app/release
 
 
-#
+#ENV variables
+.env
 
 # Created by https://www.toptal.com/developers/gitignore/api/flutter
 # Edit at https://www.toptal.com/developers/gitignore?templates=flutter
