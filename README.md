@@ -2,15 +2,27 @@
 
 ## Description
 
-| File                                                |
-| --------------------------------------------------- |
-| [GoRoute & Riverpod](./assets/GoRoute.md)           |
-| [Mockups](./assets/Mockups.md)                      |
-| [Mockups production](./assets/MockupsProduction.md) |
+| File                                                     |
+| -------------------------------------------------------- |
+| [GoRoute & Riverpod](./assets/GoRoute.md)                |
+| [Context within architecture ](./assets/Architecture.md) |
+| [Mockups](./assets/Mockups.md)                           |
+| [Mockups production](./assets/MockupsProduction.md)      |
 
 ## Development
 
 You will follow this guide as you are in the root of repository.
+
+### Folder structure
+
+| Folder                             | Description                                                  |
+| ---------------------------------- | ------------------------------------------------------------ |
+| `lib/config`                       | It contains constants, application routes (using **GoRoutes**), and themes using **Material** & **google_fonts**. |
+| `lib/features/auth/domain`         | It contains the entire domain model, along with the datasource, entities, and repositories. |
+| `lib/features/auth/infrastructure` | It contains the **datasources**, which are the current functions of the app, error **customizations**, User mappers, and repository implementation. |
+| `lib/features/auth/presentation`   | The presentation layer, providers, and screens are included here, and you can also create custom widgets within it. |
+| `lib/features/drive`               | It contains the main views layer of CapyFile APP.            |
+| `lib/features/shared`              | It contains functions and classes that are shared across multiple layers, and you can also create custom widgets here that you want to use throughout the app. |
 
 ### Rest API
 
@@ -110,4 +122,3 @@ or
 <img src="./assets/image-20230827000729799.png" alt="image-20230827000729799" />
 
 This error normally occurs in Flutter, when you want to work with APIs that are outside the same emulator, to solve this add your IPV4 in `.env` 
-
