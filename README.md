@@ -1,19 +1,20 @@
-# login_mobile | Capylogin_mobile
+# CapyApp
 
-## Description
+[![Release](https://github.com/hawks-atlanta/frontend-flutter/actions/workflows/release.yaml/badge.svg)](https://github.com/hawks-atlanta/frontend-flutter/actions/workflows/release.yaml)
+[![Tagging](https://github.com/hawks-atlanta/frontend-flutter/actions/workflows/tagging.yaml/badge.svg)](https://github.com/hawks-atlanta/frontend-flutter/actions/workflows/tagging.yaml)
+[![Test](https://github.com/hawks-atlanta/frontend-flutter/actions/workflows/testing.yaml/badge.svg)](https://github.com/hawks-atlanta/frontend-flutter/actions/workflows/testing.yaml)
 
-| File                                                     |
-| -------------------------------------------------------- |
-| [GoRoute & Riverpod](./assets/GoRoute.md)                |
-| [Context within architecture ](./assets/Architecture.md) |
-| [Mockups](./assets/Mockups.md)                           |
-| [Mockups production](./assets/MockupsProduction.md)      |
+## Documentation
 
-## Development
+| Document             | URL                                                          |
+| -------------------- | ------------------------------------------------------------ |
+| CICD                 | [CICD.md](https://github.com/hawks-atlanta/docs/blob/main/CICD.md) |
+| CONTRIBUTING         | Make sure you first read [CONTRIBUTING.md](https://github.com/hawks-atlanta/docs/blob/main/CONTRIBUTING.md) and then, this project's [GUIDELINES.md](docs/GUIDELINES.md) |
+| Mockups              | [Mockups.md](./docs/Mockups.md)                              |
+| Mockups (production) | [MockupsProduction.md](./docs/MockupsProduction.md)          |
+| Routing              | [Routing.md](docs/Routing.md)                                |
 
-You will follow this guide as you are in the root of repository.
-
-### Folder structure
+## Repository structure
 
 | Folder                             | Description                                                  |
 | ---------------------------------- | ------------------------------------------------------------ |
@@ -24,101 +25,26 @@ You will follow this guide as you are in the root of repository.
 | `lib/features/drive`               | It contains the main views layer of CapyFile APP.            |
 | `lib/features/shared`              | It contains functions and classes that are shared across multiple layers, and you can also create custom widgets here that you want to use throughout the app. |
 
-### Rest API
+## Development
 
-To deploy this application, a connection to a backend service is required. It's necessary to view the implementation under the [Domain](#domain-structure-using-repository-pattern) model.
+- Make sure you setup the application backend by running:
 
-### Create .env
+```shell 
+docker compose up -d
+```
 
-``````
-API_LOGIN_URL = http://IP-LOCALHOST-OR-API:PORT
-``````
+This will expose `0.0.0.0:8080` with a running REST API service on your machine.
 
-### Flutter Environment
+- Then configure the **`.env`** file in the root of this repository with the IP of your machine on your local network (so your Android phone or emulator can reach the service)
 
-*"Some packages are missing or out of date, would you like to get them now?"*
+```shell
+echo "API_LOGIN_URL = http://IP_OF_YOUR_COMPUTER:8080" > .env
+```
 
-If you get this advertisement or if you don't get it, you should run the command, to install pub packages:
+- Install flutter dependencies with:
 
-``````bash
-pub get
-``````
+```shell
+flutter pub get
+```
 
-- Check the `pubspec.yaml`
-
-- Check the`assets`
-
-  <u>Select your Simulator and start app</u>
-
----
-
-## Domain Structure using *Repository Pattern*
-
-CapyFile Mobile can change the domain model without having to make many changes in the code thanks to the **repository** **pattern**, to generate the changes always take into account the response to the api that is being consumed with their respective responses.
-
-Example user entities of (*login,register,checkAuth*):
-
-``````dart
-class User {
-  final String uuid;
-  final String username;
-  final int statusCode;
-  final String message;
-  final String token;
-
-  User({
-    required this.uuid,
-    required this.username,
-    required this.statusCode,
-    required this.message,
-    required this.token,
-  });
-}
-``````
-
-This example is when such an API is consumed:
-
-``````json
-{
-    "uuid": "d63c73f1-ce3e-4f0f-b724-c7be323b0851",
-    "message": "Authentication successful",
-    "statusCode": 200,
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2OTMxMTA4MDEsInVzZXJuYW1lIjoic2FudGlhZ28iLCJ1dWlkIjoiZDYzYzczZjEtY2UzZS00ZjBmLWI3MjQtYzdiZTMyM2IwODUxIn0.dgpavfGNww5iWdilLryfi66mR6i3Yoiq7KnrhT7R0KU",
-    "username": "santiago"
-}
-``````
-
-## .env using *([Adapter Pattern](https://refactoring.guru/es/design-patterns/adapter)*)
-
-Uses an adapter pattern to handle in a more friendly way the .env, for this an Environment class was built so that it can be consumed by calling the class and the corresponding variable. Example of use: `Enviroment.apiURL` apiURL is your var .env.
-
-## Endpoints
-
-Currently consumes 2 endpoints for authentication, `/login` and ` /check-status` , also has the start to develop the consumption of an endpoint for `/register`
-
-*check-status:* CapyFile App goes through **Bearer Token** every time you need to log in to check if the token you have stored using shared preferences is valid, this API would respond something like the following:
-
-``````json
-{
-    "message": "Token is valid",
-    "statusCode": 200,
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2OTMxMDgxNjYsInVzZXJuYW1lIjoic2FudGlhZ28iLCJ1dWlkIjoiZDYzYzczZjEtY2UzZS00ZjBmLWI3MjQtYzdiZTMyM2IwODUxIn0.p5F2tS6MR7CAW2e9HMS9qv3ol9vgDejneshlQfEbFZ4",
-    "username": "santiago",
-    "uuid": "d63c73f1-ce3e-4f0f-b724-c7be323b0851"
-}
-``````
-
-or
-
-``````json
-{
-    "error": "Unauthorized",
-    "statusCode": 401
-}
-``````
-
-## Possible normal mistakes
-
-<img src="./assets/image-20230827000729799.png" alt="image-20230827000729799" />
-
-This error normally occurs in Flutter, when you want to work with APIs that are outside the same emulator, to solve this add your IPV4 in `.env` 
+- Finally compile and copy (or hot-reload) the binary to your phone/emulator
