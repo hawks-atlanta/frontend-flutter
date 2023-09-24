@@ -7,17 +7,14 @@ import 'package:login_mobile/features/auth/infrastructure/infrastructure.dart';
 class AuthDataSourceImpl extends AuthDataSource {
   final dio = Dio(BaseOptions(
     baseUrl: Enviroment.apiURL,
+    
   ));
 
   @override
   Future<User> checkAuthStatus(String token) async {
     try {
-      final response = await dio.get('/check-status',
-      options: Options(
-        headers: {
-          'Authorization': 'Bearer $token'
-          })
-          );
+      final response = await dio.post('/challenge',
+          options: Options(headers: {'Authorization': 'Bearer $token'}));
       final user = UserMapper.userJsonToEntity(response.data);
       return user;
     } on DioException catch (e) {
@@ -35,7 +32,6 @@ class AuthDataSourceImpl extends AuthDataSource {
     try {
       final responde = await dio
           .post('/login', data: {'username': username, 'password': password});
-
       final user = UserMapper.userJsonToEntity(responde.data);
       return user;
     } on DioException catch (e) {
@@ -43,7 +39,7 @@ class AuthDataSourceImpl extends AuthDataSource {
         throw CustomError(e.response?.data['message'] ?? 'Credentials wrong');
       }
       if (e.type == DioExceptionType.connectionTimeout) {
-        throw CustomError( 'Review your internet connection');
+        throw CustomError('Review your internet connection');
       }
       throw Exception();
     } catch (e) {

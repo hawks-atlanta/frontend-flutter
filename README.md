@@ -37,8 +37,10 @@ This will expose `0.0.0.0:8080` with a running REST API service on your machine.
 
 - Then configure the **`.env`** file in the root of this repository with the IP of your machine on your local network (so your Android phone or emulator can reach the service)
 
+  *Note: check whether it's **HTTP** or HTTPS with the service's port address provided by the proxy; it should be HTTP for it to work in Flutter.*
+
 ```shell
-echo "API_LOGIN_URL = http://IP_OF_YOUR_COMPUTER:8080" > .env
+echo 'API_URL="http://IP_OF_YOUR_COMPUTER:PORT"' > .env
 ```
 
 - Install flutter dependencies with:
