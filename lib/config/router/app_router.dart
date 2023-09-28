@@ -9,7 +9,7 @@ final goRouterProvider = Provider((ref) {
   final goRouterNotifier = ref.read(goRouterNotifierProvider);
 
   return GoRouter(
-    initialLocation: '/check-auth-status',
+    initialLocation: '/register',
     refreshListenable: goRouterNotifier,
     routes: [
       ///* Primera pantalla Default
