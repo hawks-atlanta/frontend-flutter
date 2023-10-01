@@ -54,7 +54,17 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   //TODO: implementar el registro
-  void registerUser(String email, String password) async {}
+  void registerUser(String email, String password) async {
+     await Future.delayed(const Duration(milliseconds: 500));
+    try {
+      final user = await authRepository.register(email, password);
+      _setRegisteredUser(user);
+    } on CustomError catch (e) {
+      noRegister(e.message);
+    } catch (e) {
+      noRegister('Something went wrong');
+    }
+  }
 
 //ver si es valido el token que contiene el usuario
   void checkAuthStatus() async {
@@ -77,6 +87,17 @@ class AuthNotifier extends StateNotifier<AuthState> {
         user: user, errorMessage: '', authStatus: AuthStatus.authenticated);
   }
 
+  void _setRegisteredUser(User user) async {
+    state = state.copyWith(
+        user: user, errorMessage: '', authStatus: AuthStatus.registered);
+  }
+
+  noRegister([String? errorMessage]) {
+    state = state.copyWith(
+        errorMessage: errorMessage,
+        authStatus: AuthStatus.notRegister);
+  }
+
   Future<void> logout([String? errorMessage]) async {
     await keyValueStorageService.removeKey('token');
     state = state.copyWith(
@@ -86,7 +107,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 }
 
-enum AuthStatus { checking, authenticated, notAuthenticated }
+enum AuthStatus { checking, authenticated, notAuthenticated, registered, notRegister }
 
 class AuthState {
   final AuthStatus authStatus;

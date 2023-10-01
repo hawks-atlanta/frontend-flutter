@@ -7,7 +7,6 @@ import 'package:login_mobile/features/auth/infrastructure/infrastructure.dart';
 class AuthDataSourceImpl extends AuthDataSource {
   final dio = Dio(BaseOptions(
     baseUrl: Enviroment.apiURL,
-    
   ));
 
   @override
@@ -48,8 +47,24 @@ class AuthDataSourceImpl extends AuthDataSource {
   }
 
   @override
-  Future<User> register(String username, String password) {
+  Future<User> register(String username, String password) async {
     // TODO: implement register
-    throw UnimplementedError();
+    try {
+      final responde = await dio.post('/register',
+          data: {'username': username, 'password': password});
+      final user = UserMapper.userJsonToEntity(responde.data);
+      return user;
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        throw CustomError(
+            e.response?.data['message'] ?? 'Username already registered');
+      }
+      if (e.type == DioExceptionType.connectionTimeout) {
+        throw CustomError('Review your internet connection');
+      }
+      throw Exception();
+    } catch (e) {
+      throw Exception();
+    }
   }
 }
