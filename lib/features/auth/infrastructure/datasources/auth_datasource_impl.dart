@@ -7,13 +7,13 @@ import 'package:login_mobile/features/auth/infrastructure/infrastructure.dart';
 class AuthDataSourceImpl extends AuthDataSource {
   final dio = Dio(BaseOptions(
     baseUrl: Enviroment.apiURL,
-    
   ));
 
   @override
   Future<User> checkAuthStatus(String token) async {
     try {
-      final response = await dio.post('/challenge',
+      final response = await dio.post('/refreshtoken',
+          data: {'token': token},
           options: Options(headers: {'Authorization': 'Bearer $token'}));
       final user = UserMapper.userJsonToEntity(response.data);
       return user;

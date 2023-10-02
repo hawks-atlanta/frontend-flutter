@@ -73,8 +73,9 @@ class LoginFormNotifier extends StateNotifier<LoginFormState> {
 
   onFormSubmitted() async {
     _touchEveryField();
-    if (!state.isValid) return;
-
+    if (!state.isValid) {
+      return;
+    }
     state = state.copyWith(isPosting: true); //actualiza el estado
 
     await loginUserCallback(state.username.value, state.password.value);
@@ -84,15 +85,25 @@ class LoginFormNotifier extends StateNotifier<LoginFormState> {
 
   onFormSubmittedBiometric() async {
     _touchEveryField();
-    //if (!state.isValid) return;
-    print('1');
+    if (state.isValid) {
+      return await loginUserCallback(state.username.value, state.password.value,
+          biometric: true);
+    }
     state = state.copyWith(isPosting: true); //actualiza el estado
-    print('2');
-    await loginUserCallback(state.username.value, state.password.value,
-        biometric: true);
-    print('3');
+
     state = state.copyWith(isPosting: false);
-    print('4');
+  }
+
+  onFormAuthBiometric() async {
+    _touchEveryField();
+    if (!state.isValid) {
+      return;
+    }
+    state = state.copyWith(isPosting: true); //actualiza el estado
+
+    await loginUserCallback(state.username.value, state.password.value);
+
+    state = state.copyWith(isPosting: false);
   }
 
   _touchEveryField() {

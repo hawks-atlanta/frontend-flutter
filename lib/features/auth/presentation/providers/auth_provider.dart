@@ -35,29 +35,40 @@ class AuthNotifier extends StateNotifier<AuthState> {
   final AuthRepository authRepository;
   final KeyValueStorageService keyValueStorageService;
   final LocalAuthentication auth = LocalAuthentication();
+  final Function? closeModalCallback;
 
   AuthNotifier({
     required this.authRepository,
     required this.keyValueStorageService,
+    this.closeModalCallback,
   }) : super(AuthState()) {
     checkAuthStatus();
   } //no hace falta mandar nada porque todo son valores opcinonales
   //estas funciones terminan delegando en el repositorio
 
   Future<void> loginUser(String username, String password,
-      {bool biometric = false}) async {
+      {bool biometric = false, bool authBiometric = false}) async {
     await Future.delayed(const Duration(milliseconds: 500));
     try {
       final user = await authRepository.login(username, password);
-      _setLoggedUser(user);
       _setUsername(username);
       if (biometric == false) {
-        _temporalBiometric();
+        _setTempLoggedUser(user);
+      }
+      if (biometric == true && state.user != null) {
+        print('loginUser: ${user.token}');
+        //TODO: crear stado OK de biometrico y cambio de botón a deshabilitado el biometrico
+
+        _setBiometricLoggedUser(user);
+      }
+      if (closeModalCallback != null) {
+        closeModalCallback!(); // Llama al callback para cerrar el Modal
       }
     } on CustomError catch (e) {
       if (biometric == false) {
         logout(e.message);
       } else {
+        //TODO: mostrar error para el ConfirmAccount
         biometricError('error biometric');
         print('erroraca1');
       }
@@ -65,6 +76,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       if (biometric == false) {
         logout('Something went wrong');
       } else {
+        //TODO: mostrar error para el ConfirmAccount
         biometricError('error biometric');
         print('erroraca2');
       }
@@ -79,24 +91,45 @@ class AuthNotifier extends StateNotifier<AuthState> {
     final token = await keyValueStorageService.getValue<String>('token');
     if (token == null) return logout();
     try {
-      //el repositorio hace la auth
       final user = await authRepository.checkAuthStatus(token);
-      _setLoggedUser(user);
+      _setBiometricLoggedUser(user);
+      print('checkAuthStatus');
     } catch (e) {
       logout();
     }
   }
 
-  void _temporalBiometric() {
-    Timer(const Duration(minutes: 1), () async {
-      await keyValueStorageService.removeKey('token');
-    });
-  }
-
-  void _setLoggedUser(User user) async {
-    await keyValueStorageService.setKeyValue('token', user.token);
+  void _setTempLoggedUser(User user) async {
+    print('_setTempLoggedUser');
     state = state.copyWith(
         user: user, errorMessage: '', authStatus: AuthStatus.authenticated);
+  }
+
+  Future<void> _setBiometricLoggedUser(User user) async {
+    print('_setBiometricLoggedUser');
+    await keyValueStorageService.setKeyValue('token', user.token);
+    await keyValueStorageService.setKeyValue('hasBiometric', true);
+    state = state.copyWith(
+      user: user,
+      errorMessage: '',
+      authStatus: AuthStatus.authenticated,
+      hasBiometric: true,
+    );
+  }
+
+  void disableBiometric(ref) async {
+    await keyValueStorageService.removeKey('token');
+    await keyValueStorageService.removeKey('hasBiometric');
+    state = state.copyWith(
+        user: null,
+        errorMessage: '',
+        authStatus: AuthStatus.authenticated,
+        hasBiometric: false);
+    //Aqui puedo abrir otro modal
+    // showModalBottomSheet(
+    //     isScrollControlled: true,
+    //     context: ref,
+    //     builder: (context) => const CustomLogin());
   }
 
   void _setUsername(String username) async {
@@ -104,7 +137,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   Future<void> logout([String? errorMessage]) async {
-    await keyValueStorageService.removeKey('token');
+    //await keyValueStorageService.removeKey('token');
     await keyValueStorageService.removeKey('username');
     state = state.copyWith(
         user: null,
@@ -119,12 +152,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
     );
   }
 
-  Future<void> authenticateWithBiometrics(ref) async {
+  Future<bool> authWithBiometrics() async {
     bool authenticated = false;
     try {
-      // Actualiza el estado para indicar que se está autenticando
       state = state.copyWith(authStatus: AuthStatus.checking);
-
       authenticated = await auth.authenticate(
         localizedReason:
             'Scan your fingerprint (or face or whatever) to authenticate',
@@ -134,41 +165,71 @@ class AuthNotifier extends StateNotifier<AuthState> {
         ),
       );
       if (authenticated) {
-        // Si la autenticación fue exitosa, actualiza el estado para indicar que está autenticado
         state = state.copyWith(authStatus: AuthStatus.authenticated);
-        showModalBottomSheet(
-            isScrollControlled: true,
-            context: ref,
-            builder: (context) => const CustomLogin());
       } else {
-        // Si la autenticación falló, actualiza el estado para indicar que no está autenticado
         state = state.copyWith(authStatus: AuthStatus.notAuthenticated);
       }
     } on PlatformException catch (e) {
       print(e);
-      // En caso de excepción, actualiza el estado con un mensaje de error
-      state = state.copyWith(errorMessage: 'Error - ${e.message}');
+      state = state.copyWith(
+          errorMessage: 'Error - ${e.message}',
+          authStatus: AuthStatus.notAuthenticated);
+    }
+    return authenticated;
+  }
+
+  Future<bool> loginWithBiometrics() async {
+    try {
+      // Get the token from storage
+      final token = await keyValueStorageService.getValue<String>('token');
+      if (token == null) {
+        return false;
+      }
+      final user = await authRepository.checkAuthStatus(token);
+      state = state.copyWith(
+        user: user,
+        errorMessage: '',
+        authStatus: AuthStatus.authenticated,
+      );
+      authWithBiometrics();
+      return true;
+        } catch (e) {
+      // Handle exceptions and set an appropriate error message
+      state = state.copyWith(
+        errorMessage: 'Error: $e',
+        authStatus: AuthStatus.notAuthenticated,
+      );
+
+      // Return false to indicate authentication failure
+      return false;
     }
   }
+
 }
 
-enum AuthStatus { checking, authenticated, notAuthenticated }
+enum AuthStatus { checking, authenticated, notAuthenticated, hasBiometric }
 
 class AuthState {
   final AuthStatus authStatus;
   final User? user;
   final String errorMessage;
+  final bool? hasBiometric;
 
   AuthState(
       {this.authStatus = AuthStatus.checking,
       this.user,
-      this.errorMessage = ''});
+      this.errorMessage = '',
+      this.hasBiometric});
 
   AuthState copyWith(
-          {AuthStatus? authStatus, User? user, String? errorMessage}) =>
+          {AuthStatus? authStatus,
+          User? user,
+          String? errorMessage,
+          bool? hasBiometric}) =>
       AuthState(
         authStatus: authStatus ?? this.authStatus,
         user: user ?? this.user,
         errorMessage: errorMessage ?? this.errorMessage,
+        hasBiometric: hasBiometric ?? this.hasBiometric,
       );
 }
