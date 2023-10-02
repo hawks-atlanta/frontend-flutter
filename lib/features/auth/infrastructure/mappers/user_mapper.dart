@@ -4,9 +4,9 @@ class UserMapper {
 
   static User userJsonToEntity(Map<String, dynamic> json) {
     return User(
-      //TODO: setup new user model with new fields returned from Proxy.NET
+      //TODO: setup new user model with new fields returned from Proxy...
       //uuid: json['uuid'],
-      //username: json['username'],
+      username: json['username'],
       //statusCode: json['statusCode'],
       //message: json['message'],
       token: json['token']

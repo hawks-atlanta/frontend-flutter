@@ -66,10 +66,19 @@ class SideMenuState extends ConsumerState<SideMenu> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: CustomFilledButton(
                 onPressed: () {
+                  ref.read(authProvider.notifier).authenticateWithBiometrics(ref);
+                },
+                text: 'Biometrics', icon: Icons.fingerprint),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: CustomFilledButton(
+                onPressed: () {
                   ref.read(authProvider.notifier).logout();
                 },
                 text: 'Log out'),
           ),
+          
         ]);
   }
 }
