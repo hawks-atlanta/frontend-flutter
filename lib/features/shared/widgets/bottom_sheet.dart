@@ -33,13 +33,23 @@ class CustomLogin extends ConsumerWidget {
           padding:
               EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
           child: SizedBox(
-            height: 300,
+            height: 400,
             child: Padding(
               padding: const EdgeInsets.all(25.0),
               child: Column(
                 children: [
                   const SizedBox(height: 5),
                   Text('Confirm Account', style: textStyles.titleLarge),
+                  const SizedBox(height: 20),
+                  CustomTextFormField(
+                    label: 'Username',
+                    keyboardType: TextInputType.emailAddress,
+                    onChanged:
+                        ref.read(loginFormProvider.notifier).onUsernameChange,
+                    errorMessage: loginForm.isFormPosted
+                        ? loginForm.username.errorMessage
+                        : null,
+                  ),
                   const SizedBox(height: 20),
                   CustomTextFormField(
                     label: 'Insert you password',
@@ -61,7 +71,7 @@ class CustomLogin extends ConsumerWidget {
                               ? null
                               : ref
                                   .read(loginFormProvider.notifier)
-                                  .onFormSubmitted
+                                  .onFormSubmittedBiometric
                           )),
                   const Spacer(flex: 2),
                 ],

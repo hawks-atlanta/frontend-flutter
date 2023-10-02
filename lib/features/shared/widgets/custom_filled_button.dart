@@ -31,11 +31,11 @@ class CustomFilledButton extends StatelessWidget {
             mainAxisAlignment: icon != null
                 ? MainAxisAlignment.spaceBetween
                 : MainAxisAlignment
-                    .center, // Alinea el texto al centro si no hay un icono
+                    .center, //Alineado
             children: <Widget>[
               Text(text),
               if (icon != null)
-                Icon(icon), // Usa el icono solo si se proporciona
+                Icon(icon), //TODO: Icon passed as parameter
             ]));
   }
 }

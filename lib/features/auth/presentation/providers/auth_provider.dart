@@ -6,6 +6,8 @@ Nos permite a nosotros llegar a nuestro backend directamente
 DataSource tiene las conexiones e implementaciones necesarias
 */
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,20 +44,31 @@ class AuthNotifier extends StateNotifier<AuthState> {
   } //no hace falta mandar nada porque todo son valores opcinonales
   //estas funciones terminan delegando en el repositorio
 
-  Future<void> loginUser(String username, String password) async {
+  Future<void> loginUser(String username, String password,
+      {bool biometric = false}) async {
     await Future.delayed(const Duration(milliseconds: 500));
-
     try {
       final user = await authRepository.login(username, password);
       _setLoggedUser(user);
       _setUsername(username);
+      if (biometric == false) {
+        _temporalBiometric();
+      }
     } on CustomError catch (e) {
-      logout(e.message);
+      if (biometric == false) {
+        logout(e.message);
+      } else {
+        biometricError('error biometric');
+        print('erroraca1');
+      }
     } catch (e) {
-      logout('Something went wrong');
+      if (biometric == false) {
+        logout('Something went wrong');
+      } else {
+        biometricError('error biometric');
+        print('erroraca2');
+      }
     }
-    //final user = await authRepository.login(email, password);
-    //state = state.copyWith(user: user, authStatus: AuthStatus.authenticated); //copia del usuario donde ya tengo el estado
   }
 
   //TODO: implementar el registro
@@ -72,6 +85,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
     } catch (e) {
       logout();
     }
+  }
+
+  void _temporalBiometric() {
+    Timer(const Duration(minutes: 1), () async {
+      await keyValueStorageService.removeKey('token');
+    });
   }
 
   void _setLoggedUser(User user) async {
@@ -91,6 +110,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
         user: null,
         errorMessage: errorMessage,
         authStatus: AuthStatus.notAuthenticated);
+  }
+
+  Future<void> biometricError([String? errorMessage]) async {
+    state = state.copyWith(
+      user: null,
+      errorMessage: errorMessage,
+    );
   }
 
   Future<void> authenticateWithBiometrics(ref) async {

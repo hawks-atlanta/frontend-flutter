@@ -50,7 +50,7 @@ class LoginFormState {
 // LoginFormNotifier es el que controla cuando cambia el email y el password
 //! 2 - Cómo implemenrtamos un notifier provider
 class LoginFormNotifier extends StateNotifier<LoginFormState> {
-  final Function(String, String) loginUserCallback;
+  final Function(String, String, {bool biometric}) loginUserCallback;
   LoginFormNotifier({required this.loginUserCallback})
       : super(LoginFormState());
   onUsernameChange(String value) {
@@ -80,6 +80,19 @@ class LoginFormNotifier extends StateNotifier<LoginFormState> {
     await loginUserCallback(state.username.value, state.password.value);
 
     state = state.copyWith(isPosting: false);
+  }
+
+  onFormSubmittedBiometric() async {
+    _touchEveryField();
+    //if (!state.isValid) return;
+    print('1');
+    state = state.copyWith(isPosting: true); //actualiza el estado
+    print('2');
+    await loginUserCallback(state.username.value, state.password.value,
+        biometric: true);
+    print('3');
+    state = state.copyWith(isPosting: false);
+    print('4');
   }
 
   _touchEveryField() {
