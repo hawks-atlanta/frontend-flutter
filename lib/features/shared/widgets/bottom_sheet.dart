@@ -10,8 +10,10 @@ class CustomLogin extends ConsumerWidget {
   void showSnackbar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      elevation: 8,
       content: Text(message),
       backgroundColor: Colors.red,
+      behavior: SnackBarBehavior.floating,
     ));
   }
 
@@ -20,6 +22,7 @@ class CustomLogin extends ConsumerWidget {
     final loginForm =
         ref.watch(loginFormProvider); //acceso al state no al notifier
 
+    //va escuchando los cambios del state
     ref.listen(authProvider, (previous, next) {
       if (next.errorMessage.isEmpty) return;
       showSnackbar(context, next.errorMessage);

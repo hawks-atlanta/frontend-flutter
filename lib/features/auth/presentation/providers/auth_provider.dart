@@ -8,14 +8,12 @@ DataSource tiene las conexiones e implementaciones necesarias
 
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:login_mobile/features/auth/infrastructure/infrastructure.dart';
 import 'package:login_mobile/features/shared/infrastructure/inputs/services/key_value_storage_impl.dart';
 import 'package:login_mobile/features/shared/infrastructure/inputs/services/key_value_storage_services.dart';
-import 'package:login_mobile/features/shared/widgets/bottom_sheet.dart';
 import '../../domain/domain.dart';
 
 /*
@@ -56,29 +54,22 @@ class AuthNotifier extends StateNotifier<AuthState> {
         _setTempLoggedUser(user);
       }
       if (biometric == true && state.user != null) {
-        print('loginUser: ${user.token}');
-        //TODO: crear stado OK de biometrico y cambio de botón a deshabilitado el biometrico
-
         _setBiometricLoggedUser(user);
       }
       if (closeModalCallback != null) {
-        closeModalCallback!(); // Llama al callback para cerrar el Modal
+        closeModalCallback!();
       }
     } on CustomError catch (e) {
       if (biometric == false) {
         logout(e.message);
       } else {
-        //TODO: mostrar error para el ConfirmAccount
-        biometricError('error biometric');
-        print('erroraca1');
+        biometricError(e.message);
       }
     } catch (e) {
       if (biometric == false) {
         logout('Something went wrong');
       } else {
-        //TODO: mostrar error para el ConfirmAccount
-        biometricError('error biometric');
-        print('erroraca2');
+        biometricError('Your username or password is incorrect');
       }
     }
   }
@@ -93,20 +84,17 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       final user = await authRepository.checkAuthStatus(token);
       _setBiometricLoggedUser(user);
-      print('checkAuthStatus');
     } catch (e) {
       logout();
     }
   }
 
   void _setTempLoggedUser(User user) async {
-    print('_setTempLoggedUser');
     state = state.copyWith(
         user: user, errorMessage: '', authStatus: AuthStatus.authenticated);
   }
 
   Future<void> _setBiometricLoggedUser(User user) async {
-    print('_setBiometricLoggedUser');
     await keyValueStorageService.setKeyValue('token', user.token);
     await keyValueStorageService.setKeyValue('hasBiometric', true);
     state = state.copyWith(
@@ -147,7 +135,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<void> biometricError([String? errorMessage]) async {
     state = state.copyWith(
-      user: null,
       errorMessage: errorMessage,
     );
   }
@@ -170,7 +157,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
         state = state.copyWith(authStatus: AuthStatus.notAuthenticated);
       }
     } on PlatformException catch (e) {
-      print(e);
       state = state.copyWith(
           errorMessage: 'Error - ${e.message}',
           authStatus: AuthStatus.notAuthenticated);
@@ -180,7 +166,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<bool> loginWithBiometrics() async {
     try {
-      // Get the token from storage
       final token = await keyValueStorageService.getValue<String>('token');
       if (token == null) {
         return false;
@@ -193,18 +178,14 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
       authWithBiometrics();
       return true;
-        } catch (e) {
-      // Handle exceptions and set an appropriate error message
+    } catch (e) {
       state = state.copyWith(
         errorMessage: 'Error: $e',
         authStatus: AuthStatus.notAuthenticated,
       );
-
-      // Return false to indicate authentication failure
       return false;
     }
   }
-
 }
 
 enum AuthStatus { checking, authenticated, notAuthenticated, hasBiometric }
