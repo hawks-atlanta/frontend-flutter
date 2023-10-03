@@ -75,6 +75,9 @@ class _LoginForm extends ConsumerWidget {
   @override
   //WidgetRef ref: todos los provider de RiverPod
   Widget build(BuildContext context, WidgetRef ref) {
+    final textStyles = Theme.of(context).textTheme;
+    final hasBiometric = ref.watch(authProvider).hasBiometric;
+
     final loginForm =
         ref.watch(loginFormProvider); //acceso al state no al notifier
 
@@ -82,8 +85,6 @@ class _LoginForm extends ConsumerWidget {
       if (next.errorMessage.isEmpty) return;
       showSnackbar(context, next.errorMessage);
     });
-
-    final textStyles = Theme.of(context).textTheme;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -112,10 +113,29 @@ class _LoginForm extends ConsumerWidget {
               width: double.infinity,
               height: 60,
               child: CustomFilledButton(
-                text: 'Sign in',
-                buttonColor: Colors.black,
-                onPressed: loginForm.isPosting ? null : ref.read(loginFormProvider.notifier).onFormSubmitted //si no posteo mando ref a la func
-              )),
+                  text: 'Sign in',
+                  buttonColor: Colors.black,
+                  onPressed: loginForm.isPosting
+                      ? null
+                      : ref
+                          .read(loginFormProvider.notifier)
+                          .onFormSubmitted //si no posteo mando ref a la func
+                  )),
+          const SizedBox(height: 10),
+          if (hasBiometric == true)
+            SizedBox(
+                width: double.infinity,
+                height: 60,
+                child: CustomFilledButton(
+                    text: 'Sign in with biometric',
+                    buttonColor: Colors.black,
+                    onPressed: loginForm.isPosting
+                        ? null
+                        : () {
+                            ref
+                                .read(authProvider.notifier)
+                                .loginWithBiometrics();
+                          })),
           const Spacer(flex: 2),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,

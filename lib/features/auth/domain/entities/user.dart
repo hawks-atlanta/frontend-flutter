@@ -1,6 +1,6 @@
 class User {
   //final String uuid;
-  //final String username;
+  final String? username;
   //final int statusCode;
   //final String? message;
   final String token;
@@ -8,7 +8,7 @@ class User {
   //TODO?: add required
   User({
     //required this.uuid,
-    //required this.username,
+    required this.username,
     //required this.statusCode,
     //required this.message,
     required this.token,
