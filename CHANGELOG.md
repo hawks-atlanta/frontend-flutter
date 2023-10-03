@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 0.0.9 (2023-10-03)
+
+
+### Features
+
+* added local biometric authentication ([#19](https://github.com/hawks-atlanta/frontend-flutter/issues/19)) ([0218c88](https://github.com/hawks-atlanta/frontend-flutter/commit/0218c88bb68a92507015a640a08a6eb7df9f81c1)), closes [#12](https://github.com/hawks-atlanta/frontend-flutter/issues/12) [#13](https://github.com/hawks-atlanta/frontend-flutter/issues/13) [#17](https://github.com/hawks-atlanta/frontend-flutter/issues/17)
+
 ### 0.0.8 (2023-09-24)
 
 ### 0.0.7 (2023-09-24)
