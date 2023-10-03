@@ -94,6 +94,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   noRegister([String? errorMessage]) {
     state = state.copyWith(
+        user: null,
         errorMessage: errorMessage,
         authStatus: AuthStatus.notRegister);
   }

@@ -33,6 +33,7 @@ class RepeatPassword extends FormzInput<String, RepeatPasswordError> {
   @override
   RepeatPasswordError? validator(String value) {
     if (value.isEmpty || value.trim().isEmpty) return RepeatPasswordError.empty;
+    if (value == "no") return RepeatPasswordError.compare;
     
   
     return null;

@@ -1,5 +1,4 @@
 import 'dart:ffi';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:formz/formz.dart';
 import 'package:login_mobile/features/auth/presentation/providers/auth_provider.dart';
@@ -75,6 +74,9 @@ class RegisterFormNotifier extends StateNotifier<RegisterFormState> {
   }
 
   onRepeatPasswordChanged(String value) {
+    if(value != state.password.value){
+      value = "no";
+    }
     final newRepeatPassword = RepeatPassword.dirty(value);
     state = state.copyWith(
       repeatPassword: newRepeatPassword,
@@ -94,10 +96,17 @@ class RegisterFormNotifier extends StateNotifier<RegisterFormState> {
     state = state.copyWith(isPosting: false);
   }
 
+  
+
   _touchEveryField() {
+
     final username = Username.dirty(state.username.value);
     final password = Password.dirty(state.password.value);
     final repeatpassword = RepeatPassword.dirty(state.repeatPassword.value);
+
+   // state.password.value != state.repeatPassword.value ? () => repeatpassword.validator("no") : repeatpassword.validator("si");
+
+    
 
     state = state.copyWith(
         isFormPosted: true,
