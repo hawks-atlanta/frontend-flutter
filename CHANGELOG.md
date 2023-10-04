@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 0.0.10 (2023-10-04)
+
+
+### Bug Fixes
+
+* showSnackbar visible in the showModalBottomSheet and error is visible here ([#21](https://github.com/hawks-atlanta/frontend-flutter/issues/21)) ([fd649f1](https://github.com/hawks-atlanta/frontend-flutter/commit/fd649f14a5eb7ab5751daee81c79c61bc1ce9ff2))
+
 ### 0.0.9 (2023-10-03)
 
 
