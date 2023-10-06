@@ -1,6 +1,6 @@
 class User {
   //final String uuid;
-  final String? username;
+  String? username;
   //final int statusCode;
   //final String? message;
   final String token;

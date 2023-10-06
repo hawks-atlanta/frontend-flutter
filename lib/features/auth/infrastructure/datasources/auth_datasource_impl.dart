@@ -12,7 +12,7 @@ class AuthDataSourceImpl extends AuthDataSource {
   @override
   Future<User> checkAuthStatus(String token) async {
     try {
-      final response = await dio.post('/refreshtoken',
+      final response = await dio.post('/auth/refresh',
           data: {'token': token},
           options: Options(headers: {'Authorization': 'Bearer $token'}));
       final user = UserMapper.userJsonToEntity(response.data);
@@ -31,7 +31,7 @@ class AuthDataSourceImpl extends AuthDataSource {
   Future<User> login(String username, String password) async {
     try {
       final responde = await dio
-          .post('/login', data: {'username': username, 'password': password});
+          .post('/auth/login', data: {'username': username, 'password': password});
       final user = UserMapper.userJsonToEntity(responde.data);
       return user;
     } on DioException catch (e) {
@@ -49,9 +49,8 @@ class AuthDataSourceImpl extends AuthDataSource {
 
   @override
   Future<User> register(String username, String password) async {
-    // TODO: implement register
     try {
-      final responde = await dio.post('/register',
+      final responde = await dio.post('/account/register',
           data: {'username': username, 'password': password});
       final user = UserMapper.userJsonToEntity(responde.data);
       return user;

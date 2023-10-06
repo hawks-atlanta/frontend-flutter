@@ -63,7 +63,9 @@ class SideMenuState extends ConsumerState<SideMenu> {
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 0, 16, 10),
-          child: Text('Tony Stark', style: textStyles.titleSmall),
+          child: Text(authState.user?.username ?? 'Fallback Value',
+              style: textStyles.titleSmall),
+
         ),
         const NavigationDrawerDestination(
           icon: Icon(Icons.folder),

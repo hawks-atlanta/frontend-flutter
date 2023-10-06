@@ -9,7 +9,7 @@ final goRouterProvider = Provider((ref) {
   final goRouterNotifier = ref.read(goRouterNotifierProvider);
 
   return GoRouter(
-    initialLocation: '/register',
+    initialLocation: '/check-auth-status',
     refreshListenable: goRouterNotifier,
     routes: [
       ///* Primera pantalla Default
@@ -54,7 +54,7 @@ final goRouterProvider = Provider((ref) {
         return '/login';
       }
 
-      if ((authStatus == AuthStatus.authenticated) || (authStatus == AuthStatus.registered)) {
+      if ((authStatus == AuthStatus.authenticated)) {
         if (isGoingTo == '/login' ||
             isGoingTo == '/register' ||
             isGoingTo == '/check-auth-status') {

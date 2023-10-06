@@ -49,7 +49,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
     await Future.delayed(const Duration(milliseconds: 500));
     try {
       final user = await authRepository.login(username, password);
-      _setUsername(username);
+      //De momento el repositorio no devuelve el username solo token
+      /// se asigna el username al User
+      user.username = username;
+      _setUsername(user);
       if (biometric == false) {
         _setTempLoggedUser(user);
       }
@@ -74,12 +77,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  //TODO: implementar el registro
   Future<void> registerUser(String username, String password) async {
-     await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 500));
     try {
       final user = await authRepository.register(username, password);
-      _setRegisteredUser(user);
+      _setTempLoggedUser(user);
     } on CustomError catch (e) {
       noRegister(e.message);
     } catch (e) {
@@ -87,16 +89,18 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
+/*
   void _setRegisteredUser(User user) async {
     state = state.copyWith(
         user: user, errorMessage: '', authStatus: AuthStatus.registered);
   }
+*/
 
-  void noRegister([String? errorMessage]) async{
+  void noRegister([String? errorMessage]) async {
     state = state.copyWith(
         user: null,
         errorMessage: errorMessage,
-        authStatus: AuthStatus.notRegister);
+        authStatus: AuthStatus.notAuthenticated);
   }
 
 //ver si es valido el token que contiene el usuario
@@ -142,8 +146,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
     //     builder: (context) => const CustomLogin());
   }
 
-  void _setUsername(String username) async {
-    await keyValueStorageService.setKeyValue('username', username);
+  void _setUsername(User user) async {
+    final usernameAsString = user.username.toString();
+    await keyValueStorageService.setKeyValue('username', usernameAsString);
+    state = state.copyWith(user: user);
+    print(user);
+    print(usernameAsString);
   }
 
   Future<void> logout([String? errorMessage]) async {
@@ -210,7 +218,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 }
 
-enum AuthStatus { checking, authenticated, notAuthenticated, hasBiometric,  registered, notRegister }
+enum AuthStatus { checking, authenticated, notAuthenticated, hasBiometric }
 
 class AuthState {
   final AuthStatus authStatus;

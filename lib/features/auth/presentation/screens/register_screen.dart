@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:login_mobile/features/auth/presentation/providers/data_test.dart';
 import 'package:login_mobile/features/auth/presentation/providers/providers.dart';
-import 'package:login_mobile/features/auth/presentation/providers/register_form_provider.dart';
 import 'package:login_mobile/features/shared/shared.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
@@ -47,22 +45,19 @@ class RegisterScreen extends StatelessWidget {
                 const Spacer(flex: 2),
               ],
             ),
-
-            const SizedBox(height: 50),
-            SingleChildScrollView(
-                child: Container(
+            const SizedBox(height: 30),
+            Container(
               //quite el -260 para que se acople a los dispositivos
               height: size.height -
-                  10, //- 260, // 80 los dos sizebox y 100 el ícono
+                  250, //- 260, // 80 los dos sizebox y 100 el ícono
               width: double.infinity,
               decoration: BoxDecoration(
                 color: scaffoldBackgroundColor,
                 borderRadius:
                     const BorderRadius.only(topLeft: Radius.circular(100)),
               ),
-
               child: const _RegisterForm(),
-            )),
+            ),
           ],
         ),
       ))),
@@ -95,15 +90,14 @@ class _RegisterForm extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 50),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start, // Añadido para alinear los widgets al inicio
         children: [
-          const SizedBox(height: 20),
-          //const SizedBox( height: 50 ), //revisar
+          const SizedBox(height: 90),
           AutoSizeText(
             'New Account',
             style: textStyles.titleMedium,
             maxLines: 1,
           ),
-          //const SizedBox( height: 50 ),
           const SizedBox(height: 20),
           CustomTextFormField(
             label: 'Username',
@@ -114,7 +108,6 @@ class _RegisterForm extends ConsumerWidget {
                 : null,
           ),
           const SizedBox(height: 30),
-
           CustomTextFormField(
             label: 'Password',
             obscureText: true,
@@ -124,9 +117,7 @@ class _RegisterForm extends ConsumerWidget {
                 ? registerForm.password.errorMessage
                 : null,
           ),
-
           const SizedBox(height: 30),
-
           CustomTextFormField(
             label: 'Repeat password',
             obscureText: true,
@@ -136,9 +127,7 @@ class _RegisterForm extends ConsumerWidget {
                 ? registerForm.repeatPassword.errorMessage
                 : null,
           ),
-
           const SizedBox(height: 30),
-
           SizedBox(
               width: double.infinity,
               height: 60,
@@ -148,10 +137,8 @@ class _RegisterForm extends ConsumerWidget {
                   onPressed: registerForm.isPosting
                       ? null
                       : ref.read(registerFormProvider.notifier).onFormSubmitted
-                  //(){_mySheet(context);}
                   )),
-          const Spacer(flex: 2),
-
+          const SizedBox(height: 20), // Añadido para dar un pequeño espacio entre los elementos
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -160,19 +147,18 @@ class _RegisterForm extends ConsumerWidget {
                     if (context.canPop()) {
                       return context.pop();
                     }
-
                     context.go('/login');
                   },
                   child: const Text('¿Already have an account?',
                       style: TextStyle(color: Color.fromRGBO(32, 159, 168, 1))))
             ],
           ),
-
-          const Spacer(flex: 1),
         ],
       ),
     );
   }
+}
+
 
 /*
   //modal de terminos y condiciones
@@ -252,4 +238,3 @@ class _RegisterForm extends ConsumerWidget {
           );
         });
   }*/
-}
