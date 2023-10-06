@@ -54,7 +54,7 @@ final goRouterProvider = Provider((ref) {
         return '/login';
       }
 
-      if (authStatus == AuthStatus.authenticated) {
+      if ((authStatus == AuthStatus.authenticated) || (authStatus == AuthStatus.registered)) {
         if (isGoingTo == '/login' ||
             isGoingTo == '/register' ||
             isGoingTo == '/check-auth-status') {
@@ -64,5 +64,6 @@ final goRouterProvider = Provider((ref) {
 
       return null;
     },
+
   );
 });

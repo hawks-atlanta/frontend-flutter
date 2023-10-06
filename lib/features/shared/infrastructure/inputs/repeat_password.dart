@@ -1,5 +1,4 @@
 import 'package:formz/formz.dart';
-import 'package:login_mobile/features/shared/infrastructure/inputs/inputs.dart';
 
 // Define input validation errors
 enum RepeatPasswordError { empty, compare}

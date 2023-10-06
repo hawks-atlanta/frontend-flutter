@@ -145,8 +145,10 @@ class _RegisterForm extends ConsumerWidget {
               child: CustomFilledButton(
                   text: 'Create',
                   buttonColor: Colors.black,
-                  onPressed: registerForm.isPosting ? () => _mySheet(context) : ref.read(registerFormProvider.notifier).onFormSubmitted,
-                  //(){_mySheet(context);} 
+                  onPressed: registerForm.isPosting
+                      ? null
+                      : ref.read(registerFormProvider.notifier).onFormSubmitted
+                  //(){_mySheet(context);}
                   )),
           const Spacer(flex: 2),
 
@@ -172,8 +174,7 @@ class _RegisterForm extends ConsumerWidget {
     );
   }
 
-
-
+/*
   //modal de terminos y condiciones
   _mySheet(BuildContext context) {
     showModalBottomSheet<void>(
@@ -250,5 +251,5 @@ class _RegisterForm extends ConsumerWidget {
             ),
           );
         });
-  }
+  }*/
 }

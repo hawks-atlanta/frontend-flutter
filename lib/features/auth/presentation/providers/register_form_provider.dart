@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:formz/formz.dart';
 import 'package:login_mobile/features/auth/presentation/providers/auth_provider.dart';
@@ -87,8 +86,9 @@ class RegisterFormNotifier extends StateNotifier<RegisterFormState> {
 
   onFormSubmitted() async {
     _touchEveryField();
-    if (!state.isValid) return;
-
+    if (!state.isValid) {
+      return;
+    }
     state = state.copyWith(isPosting: true);
 
     await registerUserCallback(state.username.value, state.password.value);
@@ -103,17 +103,12 @@ class RegisterFormNotifier extends StateNotifier<RegisterFormState> {
     final username = Username.dirty(state.username.value);
     final password = Password.dirty(state.password.value);
     final repeatpassword = RepeatPassword.dirty(state.repeatPassword.value);
-
-   // state.password.value != state.repeatPassword.value ? () => repeatpassword.validator("no") : repeatpassword.validator("si");
-
-    
-
     state = state.copyWith(
         isFormPosted: true,
         username: username,
         password: password,
         repeatPassword: repeatpassword,
-        isValid: Formz.validate([username, password]));
+        isValid: Formz.validate([username, password, repeatpassword]));
     
   }
 }
