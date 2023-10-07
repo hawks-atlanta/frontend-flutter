@@ -1,14 +1,12 @@
 class WrongCredentials implements Exception {
-
+  final String message;
+  
+  WrongCredentials(this.message);
 }
 
-class InvalidToken implements Exception {
+class InvalidToken implements Exception {}
 
-}
-
-class ConectionTimeout implements Exception {
-
-}
+class ConectionTimeout implements Exception {}
 
 class CustomError implements Exception {
   final String message;

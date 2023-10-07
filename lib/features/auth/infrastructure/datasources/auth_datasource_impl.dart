@@ -30,13 +30,15 @@ class AuthDataSourceImpl extends AuthDataSource {
   @override
   Future<User> login(String username, String password) async {
     try {
-      final responde = await dio
-          .post('/auth/login', data: {'username': username, 'password': password});
+      final responde = await dio.post('/auth/login',
+          data: {'username': username, 'password': password});
       final user = UserMapper.userJsonToEntity(responde.data);
       return user;
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
-        throw CustomError(e.response?.data['message'] ?? 'Credentials wrong');
+        throw CustomError(
+            /*e.response?.data ?? */
+            'Username or Password wrong');
       }
       if (e.type == DioExceptionType.connectionTimeout) {
         throw CustomError('Review your internet connection');
@@ -55,9 +57,10 @@ class AuthDataSourceImpl extends AuthDataSource {
       final user = UserMapper.userJsonToEntity(responde.data);
       return user;
     } on DioException catch (e) {
-      if (e.response?.statusCode == 401) {
+      if (e.response?.statusCode == 409) {
         throw CustomError(
-            e.response?.data['message'] ?? 'Username already registered');
+            /*e.response?.data['message'] ?? */
+            'Username already registered');
       }
       if (e.type == DioExceptionType.connectionTimeout) {
         throw CustomError('Review your internet connection');
