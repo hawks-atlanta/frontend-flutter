@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:login_mobile/config/config.dart';
 import 'package:login_mobile/features/auth/presentation/providers/auth_provider.dart';
 import 'package:login_mobile/features/auth/presentation/providers/login_form_provider.dart';
 import 'package:login_mobile/features/shared/shared.dart';

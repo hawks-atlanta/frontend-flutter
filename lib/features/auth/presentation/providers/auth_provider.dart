@@ -33,12 +33,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
   final AuthRepository authRepository;
   final KeyValueStorageService keyValueStorageService;
   final LocalAuthentication auth = LocalAuthentication();
-  final Function? closeModalCallback;
 
   AuthNotifier({
     required this.authRepository,
     required this.keyValueStorageService,
-    this.closeModalCallback,
   }) : super(AuthState()) {
     checkAuthStatus();
   } //no hace falta mandar nada porque todo son valores opcinonales
@@ -58,9 +56,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
       }
       if (biometric == true && state.user != null) {
         _setBiometricLoggedUser(user);
-      }
-      if (closeModalCallback != null) {
-        closeModalCallback!();
       }
     } on CustomError catch (e) {
       if (biometric == false) {
