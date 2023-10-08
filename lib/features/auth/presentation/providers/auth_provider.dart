@@ -4,10 +4,11 @@ Nos permite a nosotros llegar a nuestro backend directamente
 (Repositorio -> DataSource -> Backend)
 ****************************************************************
 DataSource tiene las conexiones e implementaciones necesarias
+token -> biometric activate
+tempToken -> login/register
 */
 
 import 'dart:async';
-
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_auth/local_auth.dart';
@@ -50,7 +51,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
       //De momento el repositorio no devuelve el username solo token
       /// se asigna el username al User
       user.username = username;
-      _setUsername(user);
       if (biometric == false) {
         _setTempLoggedUser(user);
       }
@@ -76,6 +76,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     await Future.delayed(const Duration(milliseconds: 500));
     try {
       final user = await authRepository.register(username, password);
+      user.username = username;
       _setTempLoggedUser(user);
     } on CustomError catch (e) {
       noRegister(e.message);
@@ -83,13 +84,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
       noRegister('Something went wrong');
     }
   }
-
-/*
-  void _setRegisteredUser(User user) async {
-    state = state.copyWith(
-        user: user, errorMessage: '', authStatus: AuthStatus.registered);
-  }
-*/
 
   void noRegister([String? errorMessage]) async {
     state = state.copyWith(
@@ -100,10 +94,35 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
 //ver si es valido el token que contiene el usuario
   void checkAuthStatus() async {
-    final token = await keyValueStorageService.getValue<String>('token');
-    if (token == null) return logout();
+    //Manejamos los estados de auth dependiendo del token si existe o no
+    //Si existe el token, lo verificamos
+    //Primero intentamos con el token de biometría
+    final biometricToken =
+        await keyValueStorageService.getValue<String>('token');
+    if (biometricToken != null) {
+      _verifyToken(biometricToken);
+      return;
+    }
+    //Después intentamos con el token temporal
+    final tempToken =
+        await keyValueStorageService.getValue<String>('tempToken');
+    if (tempToken != null) {
+      // Se hace el logout para que se borre el token temporal
+      // Si desea un usuario temp volver a entrar se borra
+      // Si se quiere cambiar el estado entonces hacer un _verifyTokenTemp(tempToken)
+      logout();
+      //_verifyToken(tempToken);
+      return;
+    }
+    //Si llegamos hasta aquí, no hay token.
+    logout();
+  }
+
+  void _verifyToken(String token) async {
     try {
       final user = await authRepository.checkAuthStatus(token);
+      // Set new token
+      await keyValueStorageService.setKeyValue('token', user.token);
       _setBiometricLoggedUser(user);
     } catch (e) {
       logout();
@@ -111,12 +130,16 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   void _setTempLoggedUser(User user) async {
+    // Si es temp no se guarda el username pero se guarda el token y el state
+    await keyValueStorageService.setKeyValue('tempToken', user.token);
     state = state.copyWith(
         user: user, errorMessage: '', authStatus: AuthStatus.authenticated);
   }
 
   Future<void> _setBiometricLoggedUser(User user) async {
+    String usernameAsString = user.username.toString();
     await keyValueStorageService.setKeyValue('token', user.token);
+    await keyValueStorageService.setKeyValue('username', usernameAsString);
     await keyValueStorageService.setKeyValue('hasBiometric', true);
     state = state.copyWith(
       user: user,
@@ -129,10 +152,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
   void disableBiometric(ref) async {
     await keyValueStorageService.removeKey('token');
     await keyValueStorageService.removeKey('hasBiometric');
+    await keyValueStorageService.removeKey('username');
+    await keyValueStorageService.removeKey('tempToken');
     state = state.copyWith(
         user: null,
         errorMessage: '',
-        authStatus: AuthStatus.authenticated,
+        authStatus: AuthStatus.notAuthenticated,
         hasBiometric: false);
     //Aqui puedo abrir otro modal
     // showModalBottomSheet(
@@ -141,17 +166,17 @@ class AuthNotifier extends StateNotifier<AuthState> {
     //     builder: (context) => const CustomLogin());
   }
 
-  void _setUsername(User user) async {
-    final usernameAsString = user.username.toString();
-    await keyValueStorageService.setKeyValue('username', usernameAsString);
-    state = state.copyWith(user: user);
-    print(user);
-    print(usernameAsString);
-  }
-
+//Elimina el token solamente cuando la biometría no está activa
   Future<void> logout([String? errorMessage]) async {
-    //await keyValueStorageService.removeKey('token');
-    await keyValueStorageService.removeKey('username');
+    final hasBiometric = state.hasBiometric;
+    // Always delete the 'tempToken'
+    await keyValueStorageService.removeKey('tempToken');
+    // If the user has biometric, delete the token and username
+    if (hasBiometric != true) {
+      await keyValueStorageService.removeKey('token');
+      await keyValueStorageService.removeKey('username');
+    }
+
     state = state.copyWith(
         user: null,
         errorMessage: errorMessage,
@@ -160,14 +185,15 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<void> biometricError([String? errorMessage]) async {
     state = state.copyWith(
-      errorMessage: errorMessage,
-    );
+        user: null,
+        errorMessage: errorMessage,
+        authStatus: AuthStatus.notAuthenticated);
   }
 
+// se usa en handleBiometricAuthentication() de side_menu.dart
   Future<bool> authWithBiometrics() async {
     bool authenticated = false;
     try {
-      state = state.copyWith(authStatus: AuthStatus.checking);
       authenticated = await auth.authenticate(
         localizedReason:
             'Scan your fingerprint (or face or whatever) to authenticate',
@@ -179,10 +205,14 @@ class AuthNotifier extends StateNotifier<AuthState> {
       if (authenticated) {
         state = state.copyWith(authStatus: AuthStatus.authenticated);
       } else {
-        state = state.copyWith(authStatus: AuthStatus.notAuthenticated);
+        state = state.copyWith(
+            authStatus: AuthStatus.notAuthenticated,
+            user: null,
+            errorMessage: 'Biometric authentication failed');
       }
     } on PlatformException catch (e) {
       state = state.copyWith(
+          user: null,
           errorMessage: 'Error - ${e.message}',
           authStatus: AuthStatus.notAuthenticated);
     }
@@ -193,13 +223,22 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       final token = await keyValueStorageService.getValue<String>('token');
       if (token == null) {
+        state = state.copyWith(
+          errorMessage: 'Token not found',
+          authStatus: AuthStatus.notAuthenticated,
+        );
         return false;
       }
+      //!TODO: Validar si es necesario guardar el token acá
       final user = await authRepository.checkAuthStatus(token);
+      await keyValueStorageService.setKeyValue('token', user.token);
+      final username =
+          await keyValueStorageService.getValue<String>('username');
+      user.username = username;
       state = state.copyWith(
         user: user,
         errorMessage: '',
-        authStatus: AuthStatus.authenticated,
+        authStatus: AuthStatus.checking,
       );
       authWithBiometrics();
       return true;
