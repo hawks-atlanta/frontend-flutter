@@ -83,25 +83,23 @@ class LoginFormNotifier extends StateNotifier<LoginFormState> {
     state = state.copyWith(isPosting: false);
   }
 
-  onFormSubmittedBiometric() async {
-    _touchEveryField();
-    if (state.isValid) {
-      return await loginUserCallback(state.username.value, state.password.value,
-          biometric: true);
-    }
-    state = state.copyWith(isPosting: true); //actualiza el estado
+  onFormSubmittedBiometric(String username) async {
+    //Validate only the password since the username comes from authState.
+    final newPassword = Password.dirty(state.password.value);
 
-    state = state.copyWith(isPosting: false);
-  }
+    state = state.copyWith(
+      isFormPosted: true,
+      password: newPassword,
+      isValid: Formz.validate([newPassword]),
+    );
 
-  onFormAuthBiometric() async {
-    _touchEveryField();
     if (!state.isValid) {
       return;
     }
-    state = state.copyWith(isPosting: true); //actualiza el estado
 
-    await loginUserCallback(state.username.value, state.password.value);
+    state = state.copyWith(isPosting: true);
+
+    await loginUserCallback(username, state.password.value, biometric: true);
 
     state = state.copyWith(isPosting: false);
   }

@@ -17,11 +17,7 @@ class StorageScreen extends StatelessWidget {
         ],
       ),
       body: const _StorageView(),
-      floatingActionButton: FloatingActionButton.extended(
-        label: const Text('New File 𐃶'),
-        icon: const Icon(Icons.add),
-        onPressed: () {},
-      ),
+   
     );
   }
 }
