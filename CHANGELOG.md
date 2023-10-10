@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 0.1.1 (2023-10-10)
+
+
+### Features
+
+* register & biometric added ([#24](https://github.com/hawks-atlanta/frontend-flutter/issues/24)) ([#29](https://github.com/hawks-atlanta/frontend-flutter/issues/29)) ([b9e87f4](https://github.com/hawks-atlanta/frontend-flutter/commit/b9e87f457b4b627d627109925addb39bcc7f502b)), closes [#9](https://github.com/hawks-atlanta/frontend-flutter/issues/9) [#26](https://github.com/hawks-atlanta/frontend-flutter/issues/26) [#25](https://github.com/hawks-atlanta/frontend-flutter/issues/25)
+
 ## 0.1.0 (2023-10-10)
 
 
