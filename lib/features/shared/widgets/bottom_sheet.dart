@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:login_mobile/config/config.dart';
 import 'package:login_mobile/features/auth/presentation/providers/auth_provider.dart';
 import 'package:login_mobile/features/auth/presentation/providers/login_form_provider.dart';
 import 'package:login_mobile/features/shared/shared.dart';
@@ -38,7 +37,7 @@ class CustomLogin extends ConsumerWidget {
     });
 
     final textStyles = Theme.of(context).textTheme;
-
+    String username = authState.user?.username ?? '';
     return GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
@@ -53,16 +52,8 @@ class CustomLogin extends ConsumerWidget {
                   children: [
                     const SizedBox(height: 5),
                     Text('Confirm Account', style: textStyles.titleLarge),
-                    const SizedBox(height: 20),
-                    CustomTextFormField(
-                      label: 'Username',
-                      keyboardType: TextInputType.emailAddress,
-                      onChanged:
-                          ref.read(loginFormProvider.notifier).onUsernameChange,
-                      errorMessage: loginForm.isFormPosted
-                          ? loginForm.username.errorMessage
-                          : null,
-                    ),
+                    const SizedBox(height: 5),
+                    Text(username, style: textStyles.titleSmall),
                     const SizedBox(height: 20),
                     CustomTextFormField(
                       label: 'Insert you password',
@@ -79,13 +70,25 @@ class CustomLogin extends ConsumerWidget {
                         width: double.infinity,
                         height: 55,
                         child: CustomFilledButton(
-                            text: 'Sign in',
-                            buttonColor: Colors.black,
-                            onPressed: loginForm.isPosting
-                                ? null
-                                : ref
-                                    .read(loginFormProvider.notifier)
-                                    .onFormSubmittedBiometric)),
+                          text: 'Confirm',
+                          buttonColor: Colors.black,
+                          onPressed: loginForm.isPosting
+                              ? null
+                              : () async {
+                                  final authState = ref.read(authProvider);
+                                  if (authState.hasBiometric == true) {
+                                    WidgetsBinding.instance
+                                        .addPostFrameCallback((_) {
+                                      if (Navigator.canPop(context)) {
+                                        Navigator.pop(context);
+                                      }
+                                    });
+                                  }
+                                  await ref
+                                      .read(loginFormProvider.notifier)
+                                      .onFormSubmittedBiometric(username);
+                                },
+                        )),
                     const Spacer(flex: 2),
                   ],
                 ),

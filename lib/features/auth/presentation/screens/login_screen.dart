@@ -77,6 +77,8 @@ class _LoginForm extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final textStyles = Theme.of(context).textTheme;
     final hasBiometric = ref.watch(authProvider).hasBiometric;
+    final userState = ref.watch(authProvider).user;
+    String username = userState?.username ?? '';
 
     final loginForm =
         ref.watch(loginFormProvider); //acceso al state no al notifier
@@ -90,15 +92,23 @@ class _LoginForm extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: 50),
       child: Column(
         children: [
-          const SizedBox(height: 50),
+          const SizedBox(height: 30),
           Text('Login', style: textStyles.titleLarge),
-          const SizedBox(height: 90),
+          hasBiometric == true
+              ? Text('Welcome back $username', style: textStyles.bodyLarge)
+              : const SizedBox(height: 0),
+          const SizedBox(height: 30),
+          hasBiometric == false ?
           CustomTextFormField(
             label: 'Username',
-            keyboardType: TextInputType.emailAddress,
+            keyboardType: TextInputType.name,
             onChanged: ref.read(loginFormProvider.notifier).onUsernameChange,
             errorMessage:
                 loginForm.isFormPosted ? loginForm.username.errorMessage : null,
+          ) : CustomTextFormField(
+            label: username,
+            keyboardType: TextInputType.name,
+            readOnly: true,
           ),
           const SizedBox(height: 30),
           CustomTextFormField(
@@ -110,23 +120,35 @@ class _LoginForm extends ConsumerWidget {
           ),
           const SizedBox(height: 30),
           SizedBox(
-              width: double.infinity,
-              height: 60,
-              child: CustomFilledButton(
-                  text: 'Sign in',
-                  buttonColor: Colors.black,
-                  onPressed: loginForm.isPosting
-                      ? null
-                      : ref
-                          .read(loginFormProvider.notifier)
-                          .onFormSubmitted //si no posteo mando ref a la func
-                  )),
+            width: double.infinity,
+            height: 60,
+            child: CustomFilledButton(
+              text: 'Sign in',
+              buttonColor: Colors.black,
+              onPressed: loginForm.isPosting
+                  ? null
+                  : hasBiometric == true
+                      ? () {
+                          ref
+                              .read(loginFormProvider.notifier)
+                              .onFormSubmittedBiometric(username);
+                        }
+                      : () {
+                          ref
+                              .read(loginFormProvider.notifier)
+                              .onFormSubmitted();
+                        },
+            ),
+          ),
           const SizedBox(height: 10),
           if (hasBiometric == true)
-            SizedBox(
-                width: double.infinity,
-                height: 60,
-                child: CustomFilledButton(
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  height: 60,
+                  child: CustomFilledButton(
                     text: 'Sign in with biometric',
                     buttonColor: Colors.black,
                     onPressed: loginForm.isPosting
@@ -135,18 +157,39 @@ class _LoginForm extends ConsumerWidget {
                             ref
                                 .read(authProvider.notifier)
                                 .loginWithBiometrics();
-                          })),
-          const Spacer(flex: 2),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextButton(
-                onPressed: () => context.push('/register'),
-                child: const Text('Create account',
-                    style: TextStyle(color: Color.fromRGBO(32, 159, 168, 1))),
-              )
-            ],
-          ),
+                          },
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        ref.watch(authProvider.notifier).disableBiometric(ref);
+                      },
+                      child: const Text(
+                        'Login with other account',
+                        style: TextStyle(
+                          color: Color.fromRGBO(27, 122, 129, 1),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          if (hasBiometric == false)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: () => context.push('/register'),
+                  child: const Text('Create account',
+                      style: TextStyle(color: Color.fromRGBO(32, 159, 168, 1))),
+                )
+              ],
+            ),
           const Spacer(flex: 1),
         ],
       ),
