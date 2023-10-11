@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 0.1.4 (2023-10-11)
+
+
+### Bug Fixes
+
+* user state biometric ([#33](https://github.com/hawks-atlanta/frontend-flutter/issues/33)) ([117c856](https://github.com/hawks-atlanta/frontend-flutter/commit/117c85601493f922df02ef1efbddab9abbe203e7)), closes [#9](https://github.com/hawks-atlanta/frontend-flutter/issues/9) [#26](https://github.com/hawks-atlanta/frontend-flutter/issues/26) [#25](https://github.com/hawks-atlanta/frontend-flutter/issues/25) [#24](https://github.com/hawks-atlanta/frontend-flutter/issues/24) [#28](https://github.com/hawks-atlanta/frontend-flutter/issues/28)
+
+### 0.1.3 (2023-10-11)
+
 ### 0.1.2 (2023-10-11)
 
 

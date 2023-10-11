@@ -103,19 +103,26 @@ class AuthNotifier extends StateNotifier<AuthState> {
       _verifyToken(biometricToken);
       return;
     }
+
     //Después intentamos con el token temporal
     final tempToken =
         await keyValueStorageService.getValue<String>('tempToken');
-    if (tempToken != null) {
-      // Se hace el logout para que se borre el token temporal
-      // Si desea un usuario temp volver a entrar se borra
-      // Si se quiere cambiar el estado entonces hacer un _verifyTokenTemp(tempToken)
-      logout();
-      //_verifyToken(tempToken);
-      return;
-    }
-    //Si llegamos hasta aquí, no hay token.
+
+    // Independientemente de si tempToken es nulo o no, ejecutamos el logout
+    // y ajustamos el estado.
+    // Ya que tempToken indica usuario temporal!
+    state = state.copyWith(hasBiometric: false);
     logout();
+
+    // Luego, si tempToken no es nulo, puedes verificarlo o hacer
+    // cualquier lógica adicional si es necesario.
+    if (tempToken != null) {
+      //_verifyToken(tempToken);
+      // [Lógica adicional aquí si tempToken existe, de momento no]
+    }
+
+    //Si llegamos hasta aquí, no hay token.
+    // [Posiblemente lógica adicional aquí si no hay token]
   }
 
   void _verifyToken(String token) async {
@@ -175,12 +182,14 @@ class AuthNotifier extends StateNotifier<AuthState> {
     if (hasBiometric != true) {
       await keyValueStorageService.removeKey('token');
       await keyValueStorageService.removeKey('username');
+      await keyValueStorageService.removeKey('tempToken');
     }
 
     state = state.copyWith(
-        user: null,
-        errorMessage: errorMessage,
-        authStatus: AuthStatus.notAuthenticated);
+      user: null,
+      errorMessage: errorMessage,
+      authStatus: AuthStatus.notAuthenticated,
+    );
   }
 
   Future<void> biometricError([String? errorMessage]) async {
