@@ -55,7 +55,7 @@ jobs:
       - name: Download dependencies
         run: flutter pub get
       - name: Create .env with server URL
-        run: echo "API_LOGIN_URL =  ${{ secrets.API_LOGIN_URL }}" > .env
+        run: echo "API_URL =  ${{ secrets.API_URL }}" > .env
       - name: Build apk
         run: flutter build apk --release
       - name: Upload Binary to Release
