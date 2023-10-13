@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 0.1.6 (2023-10-12)
+
+
+### Bug Fixes
+
+* direct connection to server ([#35](https://github.com/hawks-atlanta/frontend-flutter/issues/35)) ([48b75c5](https://github.com/hawks-atlanta/frontend-flutter/commit/48b75c5208e52ef6bc070c5e07c98aa7bac3a14b))
+
+### 0.1.5 (2023-10-11)
+
 ### 0.1.4 (2023-10-11)
 
 
