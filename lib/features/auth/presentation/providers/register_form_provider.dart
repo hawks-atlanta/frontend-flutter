@@ -4,6 +4,13 @@ import 'package:login_mobile/features/auth/presentation/providers/auth_provider.
 import 'package:login_mobile/features/shared/infrastructure/inputs/repeat_password.dart';
 import 'package:login_mobile/features/shared/shared.dart';
 
+final registerFormProvider =
+    StateNotifierProvider.autoDispose<RegisterFormNotifier, RegisterFormState>(
+        (ref) {
+  final registerUserCallback = ref.watch(authProvider.notifier).registerUser;
+  return RegisterFormNotifier(registerUserCallback: registerUserCallback);
+});
+
 class RegisterFormState {
   final bool isPosting;
   final bool isFormPosted;
@@ -73,16 +80,15 @@ class RegisterFormNotifier extends StateNotifier<RegisterFormState> {
   }
 
   onRepeatPasswordChanged(String value) {
-    if(value != state.password.value){
+    if (value != state.password.value) {
       value = "no";
     }
     final newRepeatPassword = RepeatPassword.dirty(value);
     state = state.copyWith(
-      repeatPassword: newRepeatPassword,
-      isValid: Formz.validate(
+        repeatPassword: newRepeatPassword,
+        isValid: Formz.validate(
             [newRepeatPassword, state.username, state.password]));
   }
-
 
   onFormSubmitted() async {
     _touchEveryField();
@@ -96,10 +102,7 @@ class RegisterFormNotifier extends StateNotifier<RegisterFormState> {
     state = state.copyWith(isPosting: false);
   }
 
-  
-
   _touchEveryField() {
-
     final username = Username.dirty(state.username.value);
     final password = Password.dirty(state.password.value);
     final repeatpassword = RepeatPassword.dirty(state.repeatPassword.value);
@@ -109,13 +112,5 @@ class RegisterFormNotifier extends StateNotifier<RegisterFormState> {
         password: password,
         repeatPassword: repeatpassword,
         isValid: Formz.validate([username, password, repeatpassword]));
-    
   }
 }
-
-final registerFormProvider =
-    StateNotifierProvider.autoDispose<RegisterFormNotifier, RegisterFormState>(
-        (ref) {
-  final registerUserCallback = ref.watch(authProvider.notifier).registerUser;
-  return RegisterFormNotifier(registerUserCallback: registerUserCallback);
-});
