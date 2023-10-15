@@ -1,6 +1,4 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:login_mobile/features/shared/shared.dart';
 
 class CapyDriveScreen extends StatelessWidget {
@@ -31,23 +29,23 @@ class CapyDriveScreen extends StatelessWidget {
 
   _newModal(BuildContext context) {
     showModalBottomSheet<void>(
-      backgroundColor: Color.fromARGB(119, 0, 0, 0),
+      backgroundColor: const Color.fromARGB(119, 0, 0, 0),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(60.0), topRight: Radius.circular(60.0), ),
         ),
         context: context,
         builder: (context) {
-          return Container(
+          return SizedBox(
             
             
             height: 150,
             child: Row(
               children: [
-                iconTextButton("Folder", Color.fromARGB(255, 255, 255, 255),
-                    Icon(Icons.folder), context, (){}),
-                iconTextButton("Upload", Color.fromARGB(255, 255, 255, 255),
-                    Icon(Icons.file_upload), context, (){})
+                iconTextButton("Folder", const Color.fromARGB(255, 255, 255, 255),
+                    const Icon(Icons.folder), context, (){}),
+                iconTextButton("Upload", const Color.fromARGB(255, 255, 255, 255),
+                    const Icon(Icons.file_upload), context, (){})
               ],
             ),
           );
@@ -56,11 +54,11 @@ class CapyDriveScreen extends StatelessWidget {
 
   Widget iconTextButton(
       String name, Color color, Icon icon, BuildContext context, Function function) {
-    return Container(
+    return SizedBox(
       width: MediaQuery.of(context).size.width * 0.5,
       child: Column(
         children: [
-          SizedBox(
+          const SizedBox(
             height: 40,
           ),
           Container(
@@ -69,11 +67,11 @@ class CapyDriveScreen extends StatelessWidget {
             decoration: BoxDecoration(shape: BoxShape.circle, color: color),
             child: icon,
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Text(name,
-              style: TextStyle(
+              style: const TextStyle(
                   color: Colors.white,
                   fontSize: 15,
                   fontStyle: FontStyle.italic)),
