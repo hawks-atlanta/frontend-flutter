@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:login_mobile/features/drive/presentation/providers/files_get_provider.dart';
 import 'package:login_mobile/features/drive/presentation/providers/upload_provider.dart';
 import 'icon_text_button.dart';
 
@@ -46,6 +47,7 @@ Future<void> handleFileUpload(
     allowMultiple: true,
   );
   print("Resulted files: $result");
+  final location = ref.watch(filesGetProvider).location;
 
   if (result != null) {
     for (PlatformFile file in result.files) {
@@ -66,7 +68,7 @@ Future<void> handleFileUpload(
         ref.read(filesProvider.notifier).uploadFiles(
               file.name,
               [base64String],
-              null,
+              location,
             );
       } else {
         // Manejar el caso en el que file.bytes y file.path son null, quizás mostrando un mensaje al usuario.

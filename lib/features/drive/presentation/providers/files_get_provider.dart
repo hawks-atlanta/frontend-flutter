@@ -37,6 +37,7 @@ class FilesGetNotifier extends StateNotifier<FilesGetState> {
         files: files,
         isLoading: false,
         locationHistory: newLocationHistory,
+        location: location,
       );
     } on CustomError catch (e) {
       print(e.message);
@@ -58,11 +59,12 @@ class FilesGetNotifier extends StateNotifier<FilesGetState> {
           'New history: $newLocationHistory, navigating to: $previousLocation');
       state = state.copyWith(
           locationHistory:
-              newLocationHistory); // Update the state with the new history
+              newLocationHistory, // Update the state with the new history
+          location: previousLocation // Aquí estás actualizando la location
+          );
       getFiles(location: previousLocation);
     }
   }
-
 }
 
 class FilesGetState {

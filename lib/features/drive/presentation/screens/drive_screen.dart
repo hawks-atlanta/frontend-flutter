@@ -23,6 +23,7 @@ class CapyDriveScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final scaffoldKey = GlobalKey<ScaffoldState>();
     final uploadState = ref.watch(filesProvider);
+    
 
     ref.listen(filesProvider, (previous, next) {
       if (next.errorMessage.isEmpty) return;
