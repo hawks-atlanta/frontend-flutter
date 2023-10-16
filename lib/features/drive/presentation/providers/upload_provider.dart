@@ -1,36 +1,45 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:login_mobile/features/auth/infrastructure/errors/auth_errors.dart';
 import 'package:login_mobile/features/drive/domain/repositories/file_repository.dart';
 import 'files_upload_repository_provider.dart';
 
 final filesProvider =
-    StateNotifierProvider<FilesUploadNotifier, FilesUploadState>((ref) {
+    StateNotifierProvider<FilesUploadNotifier, FileUploadState>((ref) {
   final filesRepository = ref.watch(filesRepositoryProvider);
   return FilesUploadNotifier(filesRepository: filesRepository);
 });
 
 // STATE Notifier Provider
-class FilesUploadNotifier extends StateNotifier<FilesUploadState> {
+class FilesUploadNotifier extends StateNotifier<FileUploadState> {
   final FilesRepository filesRepository;
 
   FilesUploadNotifier({required this.filesRepository})
-      : super(FilesUploadState());
+      : super(FileUploadState());
 
   final Map<String, Timer> _timers = {};
+
+  @override
+  void dispose() {
+    for (var timer in _timers.values) {
+      timer.cancel();
+    }
+    _timers.clear();
+    super.dispose();
+  }
 
   Future<void> uploadFiles(
       String fileName, List<String> fileContent, String? location) async {
     try {
       final filesUpload =
           await filesRepository.uploadFiles(fileName, fileContent, location);
-      final newUpload =
-          FileUploadInfo(fileUUID: filesUpload.fileUUID, isLoading: true);
-
-      state = FilesUploadState(uploads: [...state.uploads, newUpload]);
-
+      final newUpload = FileUploadInfo(fileUUID: filesUpload.fileUUID);
+      state = FileUploadState(uploads: [...state.uploads, newUpload]);
       _periodicFileCheck(filesUpload.fileUUID);
+    } on CustomError catch (e) {
+      errorMsg(e.message);
     } catch (e) {
-      print(e);
+      errorMsg(e.toString());
     }
   }
 
@@ -49,11 +58,10 @@ class FilesUploadNotifier extends StateNotifier<FilesUploadState> {
         final uploadIndex =
             state.uploads.indexWhere((upload) => upload.fileUUID == fileUUID);
         final updatedUpload = state.uploads[uploadIndex].copyWith(
-          isLoading: false,
-          uploadSuccess: true,
+          fileStatus: FileUploadStatus.success,
         );
 
-        state = FilesUploadState(
+        state = FileUploadState(
           uploads: [
             ...state.uploads.sublist(0, uploadIndex),
             updatedUpload,
@@ -65,7 +73,28 @@ class FilesUploadNotifier extends StateNotifier<FilesUploadState> {
       }
     } catch (e) {
       print(e);
+      _timers[fileUUID]?.cancel();
+      errorMsg(e.toString(), fileUUID, FileUploadStatus.error);
     }
+  }
+
+  Future<void> errorMsg(
+      [String? errorMessage,
+      String? fileUUID,
+      FileUploadStatus? fileStatus]) async {
+    state = state.copyWith(
+      errorMessage: errorMessage ?? '',
+    );
+    state = FileUploadState(
+      uploads: [
+        ...state.uploads,
+        FileUploadInfo(
+          fileUUID: fileUUID ?? '',
+          fileStatus: fileStatus ?? FileUploadStatus.error,
+          errorMessage: errorMessage ?? '',
+        ),
+      ],
+    );
   }
 }
 
@@ -78,35 +107,47 @@ void dispose() {
 }
 */
 
+enum FileUploadStatus { isLoading, success, error }
+
 // STATE
 class FileUploadInfo {
   final String fileUUID;
-  final bool isLoading;
-  final bool uploadSuccess;
+  final FileUploadStatus fileStatus;
+  final String errorMessage;
 
   FileUploadInfo({
     required this.fileUUID,
-    this.isLoading = false,
-    this.uploadSuccess = false,
+    this.fileStatus = FileUploadStatus.isLoading,
+    this.errorMessage = '',
   });
 
   FileUploadInfo copyWith({
     String? fileUUID,
-    bool? isLoading,
-    bool? uploadSuccess,
-  }) {
-    return FileUploadInfo(
-      fileUUID: fileUUID ?? this.fileUUID,
-      isLoading: isLoading ?? this.isLoading,
-      uploadSuccess: uploadSuccess ?? this.uploadSuccess,
-    );
-  }
+    FileUploadStatus? fileStatus,
+    String? errorMessage,
+  }) =>
+      FileUploadInfo(
+        fileUUID: fileUUID ?? this.fileUUID,
+        fileStatus: fileStatus ?? this.fileStatus,
+        errorMessage: errorMessage ?? this.errorMessage,
+      );
 }
 
-class FilesUploadState {
+class FileUploadState {
   final List<FileUploadInfo> uploads;
+  final String errorMessage;
 
-  FilesUploadState({
+  FileUploadState({
     this.uploads = const [],
+    this.errorMessage = '',
   });
+
+  FileUploadState copyWith({
+    List<FileUploadInfo>? uploads,
+    String? errorMessage,
+  }) =>
+      FileUploadState(
+        uploads: uploads ?? this.uploads,
+        errorMessage: errorMessage ?? this.errorMessage,
+      );
 }
