@@ -65,7 +65,7 @@ class FilesViewState extends ConsumerState<FilesView> {
           Expanded(
             child: filesState.files.isEmpty
                 ? const Center(
-                    child: Center(child: Text('Folder Empty')),
+                    child: Center(child: Text('This folder is empty')),
                   )
                 : MasonryGridView.count(
                     physics: const BouncingScrollPhysics(),

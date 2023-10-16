@@ -2,20 +2,26 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:login_mobile/features/auth/infrastructure/errors/auth_errors.dart';
 import 'package:login_mobile/features/drive/domain/repositories/file_repository.dart';
+import 'package:login_mobile/features/drive/presentation/providers/sync_provider.dart';
 import 'files_upload_repository_provider.dart';
 
 final filesProvider =
     StateNotifierProvider<FilesUploadNotifier, FileUploadState>((ref) {
   final filesRepository = ref.watch(filesRepositoryProvider);
-  return FilesUploadNotifier(filesRepository: filesRepository);
+  final syncInterface = ref.watch(syncProvider);
+  return FilesUploadNotifier(filesRepository: filesRepository, syncInterface: syncInterface);
 });
 
 // STATE Notifier Provider
 class FilesUploadNotifier extends StateNotifier<FileUploadState> {
   final FilesRepository filesRepository;
+  final SyncInterface syncInterface;
+  String? currentLocation;
 
-  FilesUploadNotifier({required this.filesRepository})
-      : super(FileUploadState());
+  FilesUploadNotifier({
+    required this.filesRepository,
+    required this.syncInterface,
+  }) : super(FileUploadState());
 
   final Map<String, Timer> _timers = {};
 
@@ -31,6 +37,7 @@ class FilesUploadNotifier extends StateNotifier<FileUploadState> {
   Future<void> uploadFiles(
       String fileName, List<String> fileContent, String? location) async {
     try {
+      currentLocation = location;
       final filesUpload =
           await filesRepository.uploadFiles(fileName, fileContent, location);
       final newUpload = FileUploadInfo(fileUUID: filesUpload.fileUUID);
@@ -44,7 +51,7 @@ class FilesUploadNotifier extends StateNotifier<FileUploadState> {
   }
 
   void _periodicFileCheck(String fileUUID) {
-    const duration = Duration(seconds: 3);
+    const duration = Duration(seconds: 2);
 
     _timers[fileUUID] = Timer.periodic(duration, (Timer t) async {
       await _checkFile(fileUUID);
@@ -60,7 +67,6 @@ class FilesUploadNotifier extends StateNotifier<FileUploadState> {
         final updatedUpload = state.uploads[uploadIndex].copyWith(
           fileStatus: FileUploadStatus.success,
         );
-
         state = FileUploadState(
           uploads: [
             ...state.uploads.sublist(0, uploadIndex),
@@ -68,7 +74,7 @@ class FilesUploadNotifier extends StateNotifier<FileUploadState> {
             ...state.uploads.sublist(uploadIndex + 1),
           ],
         );
-
+        syncInterface.onFileUploadSuccess(currentLocation);
         _timers[fileUUID]?.cancel();
       }
     } catch (e) {

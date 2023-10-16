@@ -67,6 +67,5 @@ final goRouterProvider = Provider((ref) {
 
       return null;
     },
-
   );
 });

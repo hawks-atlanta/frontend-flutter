@@ -57,7 +57,7 @@ Future<void> handleFileUpload(
         ref.read(filesProvider.notifier).uploadFiles(
               file.name,
               [base64String],
-              null, //RutaActual
+              location, //RutaActual
             );
       } else if (file.path != null) {
         // Si file.bytes es null, pero tenemos un path, intentamos leer el archivo desde el path.
