@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:login_mobile/features/drive/presentation/providers/files_get_provider.dart';
 import 'package:login_mobile/features/drive/presentation/providers/upload_provider.dart';
 import 'package:login_mobile/features/shared/shared.dart';
 import 'package:login_mobile/features/drive/presentation/widgets/files_view.dart';
 import 'package:login_mobile/features/shared/widgets/drive/new_modal.dart';
 
 class CapyDriveScreen extends ConsumerWidget {
-  const CapyDriveScreen({Key? key}) : super(key: key);
+  final String? locationId;
+
+  const CapyDriveScreen({this.locationId, Key? key}) : super(key: key);
 
   void showSnackbar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -26,19 +29,26 @@ class CapyDriveScreen extends ConsumerWidget {
       showSnackbar(context, next.errorMessage);
     });
 
+    print("locationID in CapyDriveScreen: $locationId");
+
     return Scaffold(
       drawer: SideMenu(scaffoldKey: scaffoldKey),
       appBar: AppBar(
         title: const Text('CapyFiles 𐃶'),
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.search_rounded))
+          IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => ref.read(filesGetProvider.notifier).goBack(),
+          ),
+          //IconButton(onPressed: () {}, icon: const Icon(Icons.search_rounded))
         ],
       ),
       body: Stack(
         children: [
-          const FilesView(),
+          FilesView(locationId: locationId), //pasar el ID
           // Si hay archivos que se están cargando, mostramos el CircularProgressIndicator
-          if (uploadState.uploads.any((upload) => upload.fileStatus == FileUploadStatus.isLoading))
+          if (uploadState.uploads
+              .any((upload) => upload.fileStatus == FileUploadStatus.isLoading))
             const Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
@@ -49,7 +59,8 @@ class CapyDriveScreen extends ConsumerWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        label: const Icon(Icons.add),  // El FAB siempre muestra el icono de agregar
+        label:
+            const Icon(Icons.add), // El FAB siempre muestra el icono de agregar
         onPressed: () {
           showNewModal(context, ref);
         },
@@ -57,4 +68,3 @@ class CapyDriveScreen extends ConsumerWidget {
     );
   }
 }
-

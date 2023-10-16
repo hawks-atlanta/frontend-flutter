@@ -14,9 +14,7 @@ class FileOrFolderWidget extends StatelessWidget {
       child: ListTile(
         leading: Icon(file.isFile ? Icons.insert_drive_file : Icons.folder),
         title: Text(file.name),
-        onTap: () {
-          print(file.uuid);
-        },
+        //onTap: () => context.go('/folder/${file.uuid}'),
         trailing: IconButton(
           icon: const Icon(Icons.more_vert),
           onPressed: () {
