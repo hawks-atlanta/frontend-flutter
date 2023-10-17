@@ -46,8 +46,8 @@ Future<void> handleFileUpload(
     type: FileType.any,
     allowMultiple: true,
   );
-  print("Resulted files: $result");
   final location = ref.watch(filesGetProvider).location;
+  print('Location in modal: $location');
 
   if (result != null) {
     for (PlatformFile file in result.files) {

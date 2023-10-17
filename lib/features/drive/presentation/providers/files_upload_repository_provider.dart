@@ -10,10 +10,7 @@ import 'package:login_mobile/features/drive/infrastructure/repositories/file_rep
 //ReadOnly provider
 final filesRepositoryProvider = Provider<FilesRepository>((ref) {
   final accessToken = ref.watch(authProvider).user?.token ?? '';
-  print("Token: $accessToken");
-
   final filesRepository =
       FilesRepositoryImpl(FilesDatasourceImpl(accessToken: accessToken));
-
   return filesRepository;
 });

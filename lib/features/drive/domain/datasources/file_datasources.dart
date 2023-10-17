@@ -8,5 +8,5 @@ abstract class FileDataSource {
   Future<FileUploadResponse> uploadFiles(
       String fileName, List<String> fileContent, String? location);
   Future<FileCheckResponse> checkFile(String fileUUID);
-  Future<List<File>> getFiles(String? location);
+  Future<List<File>> getFiles({String? location});
 }

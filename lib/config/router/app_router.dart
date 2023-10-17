@@ -30,11 +30,8 @@ final goRouterProvider = Provider((ref) {
 
       ///* CapyDriveScreen Routes
       GoRoute(
-        name: "folder",
-        path: '/folder/:id',
-        builder: (context, state) => CapyDriveScreen(
-          locationId: state.pathParameters['id'],
-        ),
+        path: '/files',
+        builder: (context, state) => const CapyDriveScreen(),
       ),
       GoRoute(
         path: '/storage',
@@ -61,7 +58,7 @@ final goRouterProvider = Provider((ref) {
         if (isGoingTo == '/login' ||
             isGoingTo == '/register' ||
             isGoingTo == '/check-auth-status') {
-          return '/folder/:id';
+          return '/files';
         }
       }
 

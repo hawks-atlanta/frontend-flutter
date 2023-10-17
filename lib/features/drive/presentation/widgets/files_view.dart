@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:go_router/go_router.dart';
 import 'package:login_mobile/features/drive/presentation/providers/files_get_provider.dart';
 import 'package:login_mobile/features/drive/presentation/widgets/file_folder_widget.dart';
 
 class FilesView extends ConsumerStatefulWidget {
-  final String? locationId;
-
-  const FilesView({super.key, required this.locationId});
+  const FilesView({super.key});
 
   @override
   FilesViewState createState() => FilesViewState();
@@ -23,9 +20,7 @@ class FilesViewState extends ConsumerState<FilesView> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => ref
-        .read(filesGetProvider.notifier)
-        .getFiles(location: widget.locationId));
+    Future.microtask(() => ref.read(filesGetProvider.notifier).getFiles());
   }
 
   @override
@@ -78,7 +73,9 @@ class FilesViewState extends ConsumerState<FilesView> {
                       return GestureDetector(
                           onTap: fileData.isFile
                               ? null
-                              : () => context.push('/folder/${fileData.uuid}'),
+                              : () => ref
+                                  .read(filesGetProvider.notifier)
+                                  .goLocation(fileData.uuid),
                           child: FileOrFolderWidget(file: fileData));
                     },
                   ),

@@ -19,25 +19,30 @@ final filesGetProvider =
 class FilesGetNotifier extends StateNotifier<FilesGetState> {
   final FilesRepository filesRepository;
 
-  FilesGetNotifier({required this.filesRepository}) : super(FilesGetState()) {
+  FilesGetNotifier({required this.filesRepository})
+      : super(FilesGetState(locationHistory: [
+          '',
+        ])) { //también podemos probar con [null]
     getFiles();
   }
 
-  Future getFiles({String? location}) async {
+  Future getFiles() async {
     if (state.isLoading) return;
     try {
-      print('Getting files for location: $location');
+      print('Getting files for location: ${state.location}');
       state = state.copyWith(isLoading: true);
-      final files = await filesRepository.getFiles(location);
+      final files = await filesRepository.getFiles(location: state.location);
       final newLocationHistory = List<String>.from(state.locationHistory);
-      if (location != null) {
-        newLocationHistory.add(location);
+      if (state.location != null &&
+          (newLocationHistory.isEmpty ||
+              newLocationHistory.last != state.location)) {
+        newLocationHistory.add(state.location ?? '');
+        print('Added $state.location to locationHistory: $newLocationHistory');
       }
       state = state.copyWith(
         files: files,
         isLoading: false,
         locationHistory: newLocationHistory,
-        location: location,
       );
     } on CustomError catch (e) {
       print(e.message);
@@ -46,24 +51,29 @@ class FilesGetNotifier extends StateNotifier<FilesGetState> {
     }
   }
 
+  void goLocation(String location) {
+    state = state.copyWith(location: location);
+    getFiles();
+  }
+
   void goBack() {
     print('Going back. Current history: ${state.locationHistory}');
-    if (state.locationHistory.isNotEmpty) {
+    if ((state.locationHistory).isEmpty) {
+      print('No more locations in history, navigating to root');
+      state = state.copyWith(locationHistory: [], location: null);
+    } else {
       final newLocationHistory = List<String>.from(state.locationHistory);
-      newLocationHistory
-          .removeLast(); // Remove the current location from the history
-      final previousLocation = newLocationHistory.isNotEmpty
-          ? newLocationHistory.removeLast()
-          : null;
+      newLocationHistory.removeLast();
+      final previousLocation =
+          newLocationHistory.isNotEmpty ? newLocationHistory.last : null;
       print(
           'New history: $newLocationHistory, navigating to: $previousLocation');
       state = state.copyWith(
-          locationHistory:
-              newLocationHistory, // Update the state with the new history
-          location: previousLocation // Aquí estás actualizando la location
-          );
-      getFiles(location: previousLocation);
+          locationHistory: newLocationHistory, location: previousLocation);
     }
+    state = state.copyWith(location: state.location);
+    // Llama a getFiles solo después de actualizar la ubicación
+    getFiles();
   }
 }
 
@@ -77,7 +87,9 @@ class FilesGetState {
     this.isLoading = false,
     this.files = const [],
     this.location, //por default null es la raiz "/"
-    this.locationHistory = const [],
+    this.locationHistory = const [
+      '',
+    ],
   });
 
   FilesGetState copyWith({

@@ -27,42 +27,42 @@ class FileOrFolderWidget extends StatelessWidget {
                   children: [
                     ListTile(
                       leading: const Icon(Icons.download),
-                      title: const Text('Descargar'),
+                      title: const Text('Download'),
                       onTap: () {
                         // Lógica de descarga
                       },
                     ),
                     ListTile(
                       leading: const Icon(Icons.drive_file_move),
-                      title: const Text('Mover'),
+                      title: const Text('Move File'),
                       onTap: () {
                         // Lógica para mover
                       },
                     ),
                     ListTile(
                       leading: const Icon(Icons.drive_file_rename_outline),
-                      title: const Text('Renombrar'),
+                      title: const Text('Rename'),
                       onTap: () {
                         // Lógica para renombrar
                       },
                     ),
                     ListTile(
                       leading: const Icon(Icons.delete),
-                      title: const Text('Borrar'),
+                      title: const Text('Delete'),
                       onTap: () {
                         // Lógica para borrar
                       },
                     ),
                     ListTile(
                       leading: const Icon(Icons.share),
-                      title: const Text('Compartir'),
+                      title: const Text('Share'),
                       onTap: () {
                         // Lógica para compartir
                       },
                     ),
                     ListTile(
                       leading: const Icon(Icons.stop_screen_share_outlined),
-                      title: const Text('Descompartir'),
+                      title: const Text('UnShare'),
                       onTap: () {
                         // Lógica para descompartir
                       },

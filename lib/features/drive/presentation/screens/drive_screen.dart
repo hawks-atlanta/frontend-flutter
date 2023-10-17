@@ -7,9 +7,7 @@ import 'package:login_mobile/features/drive/presentation/widgets/files_view.dart
 import 'package:login_mobile/features/shared/widgets/drive/new_modal.dart';
 
 class CapyDriveScreen extends ConsumerWidget {
-  final String? locationId;
-
-  const CapyDriveScreen({this.locationId, Key? key}) : super(key: key);
+  const CapyDriveScreen({Key? key}) : super(key: key);
 
   void showSnackbar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -23,30 +21,31 @@ class CapyDriveScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final scaffoldKey = GlobalKey<ScaffoldState>();
     final uploadState = ref.watch(filesProvider);
-    
 
     ref.listen(filesProvider, (previous, next) {
       if (next.errorMessage.isEmpty) return;
       showSnackbar(context, next.errorMessage);
     });
 
-    print("locationID in CapyDriveScreen: $locationId");
+    final location = ref.read(filesGetProvider).location;
+    print("Location in CapyDriveScreen: $location");
 
     return Scaffold(
       drawer: SideMenu(scaffoldKey: scaffoldKey),
       appBar: AppBar(
         title: const Text('CapyFiles 𐃶'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => ref.read(filesGetProvider.notifier).goBack(),
-          ),
-          //IconButton(onPressed: () {}, icon: const Icon(Icons.search_rounded))
+          ref.watch(filesGetProvider).locationHistory.isNotEmpty
+              ? IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () => ref.read(filesGetProvider.notifier).goBack(),
+                )
+              : const SizedBox.shrink(),
         ],
       ),
       body: Stack(
         children: [
-          FilesView(locationId: locationId), //pasar el ID
+          const FilesView(),
           // Si hay archivos que se están cargando, mostramos el CircularProgressIndicator
           if (uploadState.uploads
               .any((upload) => upload.fileStatus == FileUploadStatus.isLoading))

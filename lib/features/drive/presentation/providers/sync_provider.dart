@@ -12,6 +12,6 @@ class SyncInterface {
   SyncInterface(this.filesGetProviderNotifier);
 
   void onFileUploadSuccess(String? location) {
-    filesGetProviderNotifier.getFiles(location: location);
+    filesGetProviderNotifier.getFiles();
   }
 }

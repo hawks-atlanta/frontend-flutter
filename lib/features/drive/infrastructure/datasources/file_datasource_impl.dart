@@ -65,9 +65,8 @@ class FilesDatasourceImpl extends FileDataSource {
   //El list sería dio.post Lista de maps en dynamic
 
   @override
-  Future<List<File>> getFiles(String? location) async {
+  Future<List<File>> getFiles({String? location}) async {
     try {
-      print("token getFiles: $accessToken");
       Map<String, dynamic> data = {'token': accessToken};
       // Si location no es nulo, añadirlo al mapa de datos
       if (location != null) {
