@@ -6,4 +6,6 @@ abstract class FilesRepository {
       String fileName, List<String> fileContent, String? location);
   Future<FileCheckResponse> checkFile(String fileUUID);
   Future<List<File>> getFiles({String? location});
+  Future<FileNewDirectoryResponse> newDirectory(String directoryName,
+      {String? location});
 }

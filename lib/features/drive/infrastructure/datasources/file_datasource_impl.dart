@@ -6,6 +6,7 @@ import 'package:login_mobile/features/drive/domain/entities/file.dart';
 import 'package:login_mobile/features/drive/domain/entities/file_upload.dart';
 import 'package:login_mobile/features/drive/infrastructure/mappers/file_check_mapper.dart';
 import 'package:login_mobile/features/drive/infrastructure/mappers/file_list_mapper.dart';
+import 'package:login_mobile/features/drive/infrastructure/mappers/file_new_dir_mapper.dart';
 import 'package:login_mobile/features/drive/infrastructure/mappers/file_upload_mapper.dart';
 
 class FilesDatasourceImpl extends FileDataSource {
@@ -77,6 +78,37 @@ class FilesDatasourceImpl extends FileDataSource {
       if (response.statusCode == 200) {
         List<File> files = FileMapper.fromJson(response.data);
         return files;
+      } else {
+        throw Exception('Error');
+      }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        throw CustomError('Token Wrong');
+      }
+      if (e.type == DioExceptionType.connectionTimeout) {
+        throw CustomError('Review your internet connection');
+      }
+      throw Exception(e.toString());
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<FileNewDirectoryResponse> newDirectory(String directoryName,
+      {String? location}) async {
+    try {
+      Map<String, dynamic> data = {'token': accessToken};
+      // Si location no es nulo, añadirlo al mapa de datos
+      if (location != null) {
+        data['location'] = location;
+      }
+      data['directoryName'] = directoryName;
+      final response = await dio.post('/file/new/directory', data: data);
+      if (response.statusCode == 200) {
+        FileNewDirectoryResponse fileNewDirectoryResponse =
+            FileNewDirMapper.fileJsonToEntity(response.data);
+        return fileNewDirectoryResponse;
       } else {
         throw Exception('Error');
       }

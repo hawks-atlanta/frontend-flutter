@@ -103,24 +103,21 @@ class AuthNotifier extends StateNotifier<AuthState> {
       _verifyToken(biometricToken);
       return;
     }
-
     //Después intentamos con el token temporal
     final tempToken =
         await keyValueStorageService.getValue<String>('tempToken');
-
     // Independientemente de si tempToken es nulo o no, ejecutamos el logout
     // y ajustamos el estado.
     // Ya que tempToken indica usuario temporal!
     state = state.copyWith(hasBiometric: false);
     logout();
-
     // Luego, si tempToken no es nulo, puedes verificarlo o hacer
     // cualquier lógica adicional si es necesario.
     if (tempToken != null) {
+      return;
       //_verifyToken(tempToken);
       // [Lógica adicional aquí si tempToken existe, de momento no]
     }
-
     //Si llegamos hasta aquí, no hay token.
     // [Posiblemente lógica adicional aquí si no hay token]
   }
@@ -184,7 +181,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
       await keyValueStorageService.removeKey('username');
       await keyValueStorageService.removeKey('tempToken');
     }
-
     state = state.copyWith(
       user: null,
       errorMessage: errorMessage,

@@ -13,3 +13,11 @@ class FileCheckResponse {
     required this.ready,
   });
 }
+
+class FileNewDirectoryResponse{
+  final String fileUUID;
+
+  FileNewDirectoryResponse({
+    required this.fileUUID,
+  });
+}

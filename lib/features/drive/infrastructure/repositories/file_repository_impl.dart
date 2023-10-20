@@ -25,4 +25,9 @@ class FilesRepositoryImpl extends FilesRepository {
   Future<List<File>> getFiles({String? location}) {
     return dataSource.getFiles(location: location);
   }
+  
+  @override
+  Future<FileNewDirectoryResponse> newDirectory(String directoryName, {String? location}) {
+    return dataSource.newDirectory(directoryName, location: location);
+  }
 }

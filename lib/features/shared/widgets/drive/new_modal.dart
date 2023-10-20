@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:login_mobile/features/drive/presentation/providers/files_get_provider.dart';
 import 'package:login_mobile/features/drive/presentation/providers/upload_provider.dart';
+import 'package:login_mobile/features/shared/widgets/drive/dialog_rename_folder.dart';
 import 'icon_text_button.dart';
 
 void showNewModal(BuildContext context, WidgetRef ref) {
@@ -24,11 +25,14 @@ void showNewModal(BuildContext context, WidgetRef ref) {
             height: 150,
             child: Row(children: [
               IconTextButton(
-                name: "Folder",
-                color: Colors.white,
-                icon: const Icon(Icons.file_upload),
-                onPress: () {},
-              ),
+                  name: "Folder",
+                  color: Colors.white,
+                  icon: const Icon(Icons.file_upload),
+                  onPress: () => showDialog(
+                      context: context,
+                      builder: (context) {
+                        return DialogWidget(title: 'New Folder', buttonTitle: 'Create', hintText: 'Untitled folder', onButtonPressed: (String value) => ref.read(filesGetProvider.notifier).createDirectory(value));  
+                      })),
               IconTextButton(
                   name: "Upload",
                   color: Colors.white,

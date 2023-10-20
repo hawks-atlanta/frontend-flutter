@@ -22,7 +22,8 @@ class FilesGetNotifier extends StateNotifier<FilesGetState> {
   FilesGetNotifier({required this.filesRepository})
       : super(FilesGetState(locationHistory: [
           '',
-        ])) { //también podemos probar con [null]
+        ])) {
+    //también podemos probar con [null]
     getFiles();
   }
 
@@ -74,6 +75,18 @@ class FilesGetNotifier extends StateNotifier<FilesGetState> {
     state = state.copyWith(location: state.location);
     // Llama a getFiles solo después de actualizar la ubicación
     getFiles();
+  }
+
+  createDirectory(String directoryName) async {
+    try {
+      await filesRepository.newDirectory(directoryName,
+          location: state.location);
+      getFiles();
+    } on CustomError catch (e) {
+      print(e.message);
+    } catch (e) {
+      print(e.toString());
+    }
   }
 }
 
