@@ -7,6 +7,7 @@ import 'package:login_mobile/features/drive/domain/entities/file_upload.dart';
 import 'package:login_mobile/features/drive/infrastructure/mappers/file_check_mapper.dart';
 import 'package:login_mobile/features/drive/infrastructure/mappers/file_download_mapper.dart';
 import 'package:login_mobile/features/drive/infrastructure/mappers/file_list_mapper.dart';
+import 'package:login_mobile/features/drive/infrastructure/mappers/file_move_mapper.dart';
 import 'package:login_mobile/features/drive/infrastructure/mappers/file_new_dir_mapper.dart';
 import 'package:login_mobile/features/drive/infrastructure/mappers/file_rename_mapper.dart';
 import 'package:login_mobile/features/drive/infrastructure/mappers/file_upload_mapper.dart';
@@ -161,6 +162,33 @@ class FilesDatasourceImpl extends FileDataSource {
         RenameFileResponse renameFileResponse =
             FileRenameMapper.fileJsonToEntity(response.data);
         return renameFileResponse;
+      } else {
+        throw Exception('Error');
+      }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        throw CustomError('Token Wrong');
+      }
+      if (e.type == DioExceptionType.connectionTimeout) {
+        throw CustomError('Review your internet connection');
+      }
+      throw Exception(e.toString());
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+  
+  @override
+  Future<MoveFileResponse> moveFile(String fileUUID, String targetDirectoryUUID) async {
+    try {
+      Map<String, dynamic> data = {'token': accessToken};
+      data['fileUUID'] = fileUUID;
+      data['targetDirectoryUUID'] = targetDirectoryUUID;
+      final response = await dio.post('/file/move', data: data);
+      if (response.statusCode == 200) {
+        MoveFileResponse moveFileResponse =
+            FileMoveMapper.fileJsonToEntity(response.data);
+        return moveFileResponse;
       } else {
         throw Exception('Error');
       }

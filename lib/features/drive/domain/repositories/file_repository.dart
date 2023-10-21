@@ -10,4 +10,5 @@ abstract class FilesRepository {
       {String? location});
   Future<FileDownloadResponse> downloadFile(String fileUUID);
   Future<RenameFileResponse> renameFile(String fileUUID, String newName);
+  Future<MoveFileResponse> moveFile(String fileUUID, String targetDirectoryUUID);
 }

@@ -58,6 +58,8 @@ class CapyDriveScreen extends ConsumerWidget {
             )
         ],
       ),
+      // operador lógico si el state de move file es en true muestra el widget para mover file en la location actual
+      //le paso el location actual para que sepa en que carpeta se encuentra y el state de true lo que haría es enviar el uuid del archivo a mover
       floatingActionButton: FloatingActionButton.extended(
         label:
             const Icon(Icons.add), // El FAB siempre muestra el icono de agregar

@@ -41,4 +41,10 @@ class FilesRepositoryImpl extends FilesRepository {
   Future<RenameFileResponse> renameFile(String fileUUID, String newName) {
     return dataSource.renameFile(fileUUID, newName);
   }
+
+  @override
+  Future<MoveFileResponse> moveFile(
+      String fileUUID, String targetDirectoryUUID) {
+    return dataSource.moveFile(fileUUID, targetDirectoryUUID);
+  }
 }

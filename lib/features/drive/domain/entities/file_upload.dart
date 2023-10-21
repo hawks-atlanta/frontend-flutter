@@ -39,3 +39,11 @@ class RenameFileResponse {
     required this.msg,
   });
 }
+
+class MoveFileResponse {
+  final String msg;
+
+  MoveFileResponse({
+    required this.msg,
+  });
+}
