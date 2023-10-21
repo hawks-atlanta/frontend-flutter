@@ -72,13 +72,23 @@ class CapyDriveScreen extends ConsumerWidget {
       ),
       // operador lógico si el state de move file es en true muestra el widget para mover file en la location actual
       //le paso el location actual para que sepa en que carpeta se encuentra y el state de true lo que haría es enviar el uuid del archivo a mover
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton:
+      FloatingActionButton.extended(
         label:
-            const Icon(Icons.add), // El FAB siempre muestra el icono de agregar
-        onPressed: () {
-          showNewModal(context, ref);
-        },
+            movingFileState ? const Text("Move Here") : const Icon(Icons.add),
+        onPressed: movingFileState
+            ? () {
+                final location = ref.read(filesGetProvider).location;
+                final fileMoveUUID = ref.read(fileMoveProvider).fileMoveUUID;
+                ref
+                    .read(fileMoveProvider.notifier)
+                    .fileMove(fileMoveUUID, location ?? '');
+              }
+            : () {
+                showNewModal(context, ref);
+              },
       ),
+
     );
   }
 }

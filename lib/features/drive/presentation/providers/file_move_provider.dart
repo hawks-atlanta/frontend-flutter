@@ -14,11 +14,11 @@ class FileMoveNotifier extends StateNotifier<FileMoveState> {
 
   FileMoveNotifier({required this.filesRepository}) : super(FileMoveState());
 
-  fileMove(String fileUUID, String? targetDirectoryUUID) async {
+  fileMove(String fileUUID, String targetDirectoryUUID) async {
     try {
       state = state.copywith(movingStatus: MovingStatus.loading);
-      await filesRepository.moveFile(fileUUID, targetDirectoryUUID ?? '');
-      state = state.copywith(movingStatus: MovingStatus.done, moving: false);
+      await filesRepository.moveFile(fileUUID, targetDirectoryUUID);
+      state = state.copywith(movingStatus: MovingStatus.initial, moving: false);
     } on CustomError catch (e) {
       print(e.message);
     } catch (e) {
@@ -39,19 +39,19 @@ class FileMoveNotifier extends StateNotifier<FileMoveState> {
   }
 }
 
-enum MovingStatus { initial, loading, done, failed }
+enum MovingStatus { initial, loading, failed }
 
 class FileMoveState {
   final bool moving;
   final MovingStatus movingStatus;
   final String? error;
-  final String? fileMoveUUID;
-  final String? targetDirectoryUUID;
+  final String fileMoveUUID;
+  final String targetDirectoryUUID;
 
   FileMoveState({
     this.movingStatus = MovingStatus.initial,
     this.error,
-    this.targetDirectoryUUID,
+    this.targetDirectoryUUID = '',
     this.fileMoveUUID = '',
     this.moving = false,
   });

@@ -184,7 +184,7 @@ class FilesDatasourceImpl extends FileDataSource {
       Map<String, dynamic> data = {'token': accessToken};
       data['fileUUID'] = fileUUID;
       data['targetDirectoryUUID'] = targetDirectoryUUID;
-      final response = await dio.post('/file/move', data: data);
+      final response = await dio.put('/file/move', data: data);
       if (response.statusCode == 200) {
         MoveFileResponse moveFileResponse =
             FileMoveMapper.fileJsonToEntity(response.data);
