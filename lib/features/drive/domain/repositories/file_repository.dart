@@ -8,4 +8,5 @@ abstract class FilesRepository {
   Future<List<File>> getFiles({String? location});
   Future<FileNewDirectoryResponse> newDirectory(String directoryName,
       {String? location});
+  Future<FileDownloadResponse> downloadFile(String fileUUID);
 }

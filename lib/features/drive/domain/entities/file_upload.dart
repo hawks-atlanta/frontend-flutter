@@ -21,3 +21,13 @@ class FileNewDirectoryResponse{
     required this.fileUUID,
   });
 }
+
+class FileDownloadResponse {
+  final String? fileName;
+  final String fileContent;
+
+  FileDownloadResponse({
+    required this.fileName,
+    required this.fileContent,
+  });
+}

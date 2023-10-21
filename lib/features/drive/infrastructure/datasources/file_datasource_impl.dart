@@ -5,6 +5,7 @@ import 'package:login_mobile/features/drive/domain/datasources/file_datasources.
 import 'package:login_mobile/features/drive/domain/entities/file.dart';
 import 'package:login_mobile/features/drive/domain/entities/file_upload.dart';
 import 'package:login_mobile/features/drive/infrastructure/mappers/file_check_mapper.dart';
+import 'package:login_mobile/features/drive/infrastructure/mappers/file_download_mapper.dart';
 import 'package:login_mobile/features/drive/infrastructure/mappers/file_list_mapper.dart';
 import 'package:login_mobile/features/drive/infrastructure/mappers/file_new_dir_mapper.dart';
 import 'package:login_mobile/features/drive/infrastructure/mappers/file_upload_mapper.dart';
@@ -26,7 +27,6 @@ class FilesDatasourceImpl extends FileDataSource {
         'location': location,
         'token': accessToken
       });
-      print(response.data);
       final file = FileUploadMapper.fileJsonToEntity(response.data);
       return file;
     } on DioException catch (e) {
@@ -112,6 +112,26 @@ class FilesDatasourceImpl extends FileDataSource {
       } else {
         throw Exception('Error');
       }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        throw CustomError('Token Wrong');
+      }
+      if (e.type == DioExceptionType.connectionTimeout) {
+        throw CustomError('Review your internet connection');
+      }
+      throw Exception(e.toString());
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<FileDownloadResponse> downloadFile(String fileUUID) {
+    try {
+      Map<String, dynamic> data = {'token': accessToken};
+      data['fileUUID'] = fileUUID;
+      return dio.post('/file/download', data: data).then(
+          (response) => FileDownloadMapper.fileJsonToEntity(response.data));
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
         throw CustomError('Token Wrong');
