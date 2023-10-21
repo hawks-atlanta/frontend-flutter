@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:login_mobile/features/drive/presentation/providers/file_move_provider.dart';
 import 'package:login_mobile/features/drive/presentation/providers/files_get_provider.dart';
 import 'package:login_mobile/features/drive/presentation/providers/upload_provider.dart';
 import 'package:login_mobile/features/shared/shared.dart';
@@ -21,6 +22,7 @@ class CapyDriveScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final scaffoldKey = GlobalKey<ScaffoldState>();
     final uploadState = ref.watch(filesProvider);
+    final movingFileState = ref.read(fileMoveProvider).moving;
 
     ref.listen(filesProvider, (previous, next) {
       if (next.errorMessage.isEmpty) return;
@@ -31,7 +33,10 @@ class CapyDriveScreen extends ConsumerWidget {
     print("Location in CapyDriveScreen: $location");
 
     return Scaffold(
-      drawer: SideMenu(scaffoldKey: scaffoldKey),
+      // Operador logico, si está en moviendo archivo muestra el widget para cancelar el mover archivo si no se está moviendo muestra el drawer
+      drawer: movingFileState
+          ? const SizedBox.shrink()
+          : SideMenu(scaffoldKey: scaffoldKey),
       appBar: AppBar(
         title: const Text('CapyFiles 𐃶'),
         actions: [
@@ -39,6 +44,13 @@ class CapyDriveScreen extends ConsumerWidget {
               ? IconButton(
                   icon: const Icon(Icons.arrow_back),
                   onPressed: () => ref.read(filesGetProvider.notifier).goBack(),
+                )
+              : const SizedBox.shrink(),
+          ref.watch(fileMoveProvider).moving
+              ? IconButton(
+                  icon: const Icon(Icons.cancel),
+                  onPressed: () =>
+                      ref.read(fileMoveProvider.notifier).fileMoveCancel(),
                 )
               : const SizedBox.shrink(),
         ],

@@ -99,17 +99,6 @@ class FilesGetNotifier extends StateNotifier<FilesGetState> {
       print(e.toString());
     }
   }
-
-  fileMove(String fileUUID, String targetDirectoryUUID) async {
-    try {
-      await filesRepository.moveFile(fileUUID, targetDirectoryUUID);
-      getFiles();
-    } on CustomError catch (e) {
-      print(e.message);
-    } catch (e) {
-      print(e.toString());
-    }
-  }
 }
 
 class FilesGetState {
