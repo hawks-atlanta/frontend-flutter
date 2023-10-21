@@ -1,5 +1,6 @@
 import 'package:login_mobile/features/drive/domain/entities/file.dart';
 import 'package:login_mobile/features/drive/domain/entities/file_upload.dart';
+import 'package:login_mobile/features/drive/domain/entities/share.dart';
 
 abstract class FilesRepository {
   Future<FileUploadResponse> uploadFiles(
@@ -11,4 +12,7 @@ abstract class FilesRepository {
   Future<FileDownloadResponse> downloadFile(String fileUUID);
   Future<RenameFileResponse> renameFile(String fileUUID, String newName);
   Future<MoveFileResponse> moveFile(String fileUUID, String targetDirectoryUUID);
+  Future shareFile(String fileUUID, String otherUsername);
+  Future<ShareListWhoResponse> shareListWithWho(String fileUUID);
+
 }
