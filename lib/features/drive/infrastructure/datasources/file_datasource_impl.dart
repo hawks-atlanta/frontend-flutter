@@ -8,6 +8,7 @@ import 'package:login_mobile/features/drive/infrastructure/mappers/file_check_ma
 import 'package:login_mobile/features/drive/infrastructure/mappers/file_download_mapper.dart';
 import 'package:login_mobile/features/drive/infrastructure/mappers/file_list_mapper.dart';
 import 'package:login_mobile/features/drive/infrastructure/mappers/file_new_dir_mapper.dart';
+import 'package:login_mobile/features/drive/infrastructure/mappers/file_rename_mapper.dart';
 import 'package:login_mobile/features/drive/infrastructure/mappers/file_upload_mapper.dart';
 
 class FilesDatasourceImpl extends FileDataSource {
@@ -126,12 +127,43 @@ class FilesDatasourceImpl extends FileDataSource {
   }
 
   @override
-  Future<FileDownloadResponse> downloadFile(String fileUUID) {
+  Future<FileDownloadResponse> downloadFile(String fileUUID) async {
     try {
       Map<String, dynamic> data = {'token': accessToken};
       data['fileUUID'] = fileUUID;
-      return dio.post('/file/download', data: data).then(
-          (response) => FileDownloadMapper.fileJsonToEntity(response.data));
+      final response = await dio.post('/file/download', data: data);
+      if (response.statusCode == 200) {
+        return FileDownloadMapper.fileJsonToEntity(response.data);
+      } else {
+        throw Exception('Error');
+      }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        throw CustomError('Token Wrong');
+      }
+      if (e.type == DioExceptionType.connectionTimeout) {
+        throw CustomError('Review your internet connection');
+      }
+      throw Exception(e.toString());
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<RenameFileResponse> renameFile(String fileUUID, String newName) async {
+    try {
+      Map<String, dynamic> data = {'token': accessToken};
+      data['fileUUID'] = fileUUID;
+      data['newName'] = newName;
+      final response = await dio.post('/file/rename', data: data);
+      if (response.statusCode == 200) {
+        RenameFileResponse renameFileResponse =
+            FileRenameMapper.fileJsonToEntity(response.data);
+        return renameFileResponse;
+      } else {
+        throw Exception('Error');
+      }
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
         throw CustomError('Token Wrong');

@@ -88,6 +88,17 @@ class FilesGetNotifier extends StateNotifier<FilesGetState> {
       print(e.toString());
     }
   }
+
+  renameFile(String fileUUID, String newName) async {
+    try {
+      await filesRepository.renameFile(fileUUID, newName);
+      getFiles();
+    } on CustomError catch (e) {
+      print(e.message);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 }
 
 class FilesGetState {

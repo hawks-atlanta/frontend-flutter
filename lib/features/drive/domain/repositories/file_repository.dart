@@ -9,4 +9,5 @@ abstract class FilesRepository {
   Future<FileNewDirectoryResponse> newDirectory(String directoryName,
       {String? location});
   Future<FileDownloadResponse> downloadFile(String fileUUID);
+  Future<RenameFileResponse> renameFile(String fileUUID, String newName);
 }

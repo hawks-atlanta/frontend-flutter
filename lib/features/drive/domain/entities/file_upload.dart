@@ -31,3 +31,11 @@ class FileDownloadResponse {
     required this.fileContent,
   });
 }
+
+class RenameFileResponse {
+  final String msg;
+
+  RenameFileResponse({
+    required this.msg,
+  });
+}

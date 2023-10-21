@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:login_mobile/features/drive/domain/entities/file.dart';
 import 'package:login_mobile/features/drive/presentation/providers/download_provider.dart';
+import 'package:login_mobile/features/drive/presentation/providers/files_get_provider.dart';
+import 'package:login_mobile/features/shared/widgets/drive/dialog_rename_folder.dart';
 
 class FileOrFolderWidget extends ConsumerStatefulWidget {
   final File file;
@@ -38,7 +40,9 @@ class FileOrFolderWidgetState extends ConsumerState<FileOrFolderWidget> {
                       leading: const Icon(Icons.download),
                       title: const Text('Download'),
                       onTap: () {
-                        ref.read(filesDownloadProvider.notifier).downloadFile(widget.file.uuid);
+                        ref
+                            .read(filesDownloadProvider.notifier)
+                            .downloadFile(widget.file.uuid);
                       },
                     ),
                     ListTile(
@@ -51,9 +55,19 @@ class FileOrFolderWidgetState extends ConsumerState<FileOrFolderWidget> {
                     ListTile(
                       leading: const Icon(Icons.drive_file_rename_outline),
                       title: const Text('Rename'),
-                      onTap: () {
-                        // Lógica para renombrar
-                      },
+                      onTap: () => showDialog(
+                          context: context, builder: (context) {
+                            return DialogWidget(
+                                title: 'Rename File',
+                                buttonTitle: 'Rename',
+                                hintText: widget.file.name,
+                                onButtonPressed: (String value) => ref
+                                    .read(filesGetProvider.notifier)
+                                    .renameFile(widget.file.uuid, value));
+                          }
+                          // Lógica para renombrar
+                          //read.read(nombreProvider.notifier).renameFile(widget.file.uuid)
+                          ),
                     ),
                     ListTile(
                       leading: const Icon(Icons.delete),
