@@ -77,12 +77,13 @@ class CapyDriveScreen extends ConsumerWidget {
         label:
             movingFileState ? const Text("Move Here") : const Icon(Icons.add),
         onPressed: movingFileState
-            ? () {
+            ? () async {
                 final location = ref.read(filesGetProvider).location;
                 final fileMoveUUID = ref.read(fileMoveProvider).fileMoveUUID;
-                ref
+                await ref
                     .read(fileMoveProvider.notifier)
                     .fileMove(fileMoveUUID, location ?? '');
+                await ref.read(filesGetProvider.notifier).getFiles();
               }
             : () {
                 showNewModal(context, ref);
