@@ -215,6 +215,7 @@ class FilesDatasourceImpl extends FileDataSource {
       data['fileUUID'] = fileUUID;
       data['otherUsername'] = otherUsername;
       final response = await dio.post('/share/file', data: data);
+      print(response.data);
       if (response.statusCode == 204) {
         return true;
       } else {

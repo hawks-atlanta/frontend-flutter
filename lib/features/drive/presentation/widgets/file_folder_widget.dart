@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:login_mobile/features/auth/presentation/providers/share_provider.dart';
 import 'package:login_mobile/features/drive/domain/entities/file.dart';
 import 'package:login_mobile/features/drive/presentation/providers/download_provider.dart';
 import 'package:login_mobile/features/drive/presentation/providers/file_move_provider.dart';
 import 'package:login_mobile/features/drive/presentation/providers/files_get_provider.dart';
+import 'package:login_mobile/features/drive/presentation/screens/share_file_list_screen.dart';
 import 'package:login_mobile/features/shared/widgets/drive/dialog_rename_folder.dart';
 
 class FileOrFolderWidget extends ConsumerStatefulWidget {
@@ -59,7 +61,6 @@ class FileOrFolderWidgetState extends ConsumerState<FileOrFolderWidget> {
                       // 5) el usuario le da al botón enviar y se saca la location del state location
                       // 6) se envia la location y el uuid del archivo a mover
                       // 7) el state pasa a false
-
                       // Lógica para renombrar
                       //read.read(nombreProvider.notifier).renameFile(widget.file.uuid)
                       onTap: () {
@@ -69,7 +70,9 @@ class FileOrFolderWidgetState extends ConsumerState<FileOrFolderWidget> {
                             .read(fileMoveProvider.notifier)
                             .fileMove(widget.file.uuid, location);
                         */
-                        ref.read(fileMoveProvider.notifier).fileMoveInitial(fileMoveUUID: widget.file.uuid);
+                        ref
+                            .read(fileMoveProvider.notifier)
+                            .fileMoveInitial(fileMoveUUID: widget.file.uuid);
                       },
                     ),
                     ListTile(
@@ -98,7 +101,12 @@ class FileOrFolderWidgetState extends ConsumerState<FileOrFolderWidget> {
                       leading: const Icon(Icons.share),
                       title: const Text('Share'),
                       onTap: () {
-                        // Lógica para compartir
+                        ref
+                            .watch(shareProvider.notifier)
+                            .getShareList(widget.file.uuid);
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => ShareFileListScreen(
+                                fileUUID: widget.file.uuid)));
                       },
                     ),
                     ListTile(
