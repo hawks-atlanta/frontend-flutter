@@ -62,22 +62,26 @@ class FilesViewState extends ConsumerState<FilesView> {
                 ? const Center(
                     child: Center(child: Text('This folder is empty')),
                   )
-                : MasonryGridView.count(
-                    physics: const BouncingScrollPhysics(),
-                    crossAxisCount: stateCrossAxis,
-                    mainAxisSpacing: 1,
-                    crossAxisSpacing: 4,
-                    itemCount: filesState.files.length,
-                    itemBuilder: (context, index) {
-                      final fileData = filesState.files[index];
-                      return GestureDetector(
-                          onTap: fileData.isFile
-                              ? null
-                              : () => ref
-                                  .read(filesGetProvider.notifier)
-                                  .goLocation(fileData.uuid),
-                          child: FileOrFolderWidget(file: fileData));
-                    },
+                : Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10.0),
+                    child: MasonryGridView.count(
+                      physics: const BouncingScrollPhysics(),
+                      crossAxisCount: stateCrossAxis,
+                      mainAxisSpacing: 1,
+                      crossAxisSpacing: 4,
+                      itemCount: filesState.files.length,
+                      itemBuilder: (context, index) {
+                        final fileData = filesState.files[index];
+                        return GestureDetector(
+                            onTap: fileData.isFile
+                                ? null
+                                : () => ref
+                                    .read(filesGetProvider.notifier)
+                                    .goLocation(fileData.uuid),
+                            child: FileOrFolderWidget(file: fileData));
+                      },
+                    ),
                   ),
           ),
         ],

@@ -50,9 +50,9 @@ class SideMenuState extends ConsumerState<SideMenu> {
         });
         final goRouter = ref.read(goRouterProvider);
         if (value == 0) {
-          goRouter.go('/');
+          goRouter.go('/files');
         } else if (value == 1) {
-          goRouter.go('/storage');
+          goRouter.go('/share');
         }
         widget.scaffoldKey.currentState?.closeDrawer();
       },
@@ -72,8 +72,8 @@ class SideMenuState extends ConsumerState<SideMenu> {
           label: Text('Files'),
         ),
         const NavigationDrawerDestination(
-          icon: Icon(Icons.storage_outlined),
-          label: Text('Storage'),
+          icon: Icon(Icons.folder_shared),
+          label: Text('Share'),
         ),
         const Padding(
           padding: EdgeInsets.fromLTRB(28, 16, 28, 10),

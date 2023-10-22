@@ -24,8 +24,8 @@ class FileOrFolderWidget extends ConsumerStatefulWidget {
 class FileOrFolderWidgetState extends ConsumerState<FileOrFolderWidget> {
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: ListTile(
+    return Column(children: [
+      ListTile(
         leading:
             Icon(widget.file.isFile ? Icons.insert_drive_file : Icons.folder),
         title: Column(
@@ -45,7 +45,6 @@ class FileOrFolderWidgetState extends ConsumerState<FileOrFolderWidget> {
                 : Container(),
           ],
         ),
-        //onTap: () => context.go('/folder/${file.uuid}'),
         trailing: IconButton(
           icon: const Icon(Icons.more_vert),
           onPressed: () {
@@ -133,6 +132,7 @@ class FileOrFolderWidgetState extends ConsumerState<FileOrFolderWidget> {
           },
         ),
       ),
-    );
+      const Divider(),
+    ]);
   }
 }

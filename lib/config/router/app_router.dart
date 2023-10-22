@@ -34,8 +34,8 @@ final goRouterProvider = Provider((ref) {
         builder: (context, state) => const CapyDriveScreen(),
       ),
       GoRoute(
-        path: '/storage',
-        builder: (context, state) => const StorageScreen(),
+        path: '/share',
+        builder: (context, state) => const ShareScreen(),
       ),
     ],
     redirect: (context, state) {

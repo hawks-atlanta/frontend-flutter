@@ -3,3 +3,4 @@ class ShareListWhoResponse {
 
   ShareListWhoResponse({required this.usernames});
 }
+
