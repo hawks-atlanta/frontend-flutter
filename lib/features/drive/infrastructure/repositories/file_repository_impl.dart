@@ -1,7 +1,5 @@
 import 'package:login_mobile/features/drive/domain/datasources/file_datasources.dart';
-import 'package:login_mobile/features/drive/domain/entities/file.dart';
-import 'package:login_mobile/features/drive/domain/entities/file_upload.dart';
-import 'package:login_mobile/features/drive/domain/entities/share.dart';
+import 'package:login_mobile/features/drive/domain/entities/entities.dart';
 import 'package:login_mobile/features/drive/domain/repositories/file_repository.dart';
 
 // El único objetivo de FileRepositoryImpl es usar el dataSource

@@ -27,7 +27,7 @@ class ShareScreen extends ConsumerWidget {
           ref.watch(filesGetProvider).locationHistory.isNotEmpty
               ? IconButton(
                   icon: const Icon(Icons.arrow_back),
-                  onPressed: () => ref.read(filesGetProvider.notifier).goBack(true),
+                  onPressed: () => ref.read(filesGetProvider.notifier).goBack(isShared: true),
                 )
               : const SizedBox.shrink(),
         ],

@@ -57,7 +57,7 @@ class FilesGetNotifier extends StateNotifier<FilesGetState> {
     getFiles();
   }
 
-  void goBack(bool isShared) {
+  void goBack({bool? isShared}) {
     print('Going back. Current history: ${state.locationHistory}');
     if ((state.locationHistory).isEmpty) {
       print('No more locations in history, navigating to root');
@@ -74,7 +74,7 @@ class FilesGetNotifier extends StateNotifier<FilesGetState> {
     }
     state = state.copyWith(location: state.location);
     // Llama a getFiles solo después de actualizar la ubicación
-    if (isShared) {
+    if (isShared != null && isShared) {
       getFilesShareList();
     } else {
       getFiles();
@@ -122,9 +122,7 @@ class FilesGetState {
     this.isLoading = false,
     this.files = const [],
     this.location, //por default null es la raiz "/"
-    this.locationHistory = const [
-      '',
-    ],
+    this.locationHistory = const [],
   });
 
   FilesGetState copyWith({

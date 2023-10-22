@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:login_mobile/features/drive/presentation/providers/file_move_provider.dart';
-import 'package:login_mobile/features/drive/presentation/providers/files_get_provider.dart';
-import 'package:login_mobile/features/drive/presentation/providers/upload_provider.dart';
+import 'package:login_mobile/features/drive/presentation/providers/providers.dart';
 import 'package:login_mobile/features/shared/shared.dart';
 import 'package:login_mobile/features/drive/presentation/widgets/files_view.dart';
 import 'package:login_mobile/features/shared/widgets/drive/new_modal.dart';
@@ -43,7 +41,7 @@ class CapyDriveScreen extends ConsumerWidget {
           ref.watch(filesGetProvider).locationHistory.isNotEmpty
               ? IconButton(
                   icon: const Icon(Icons.arrow_back),
-                  onPressed: () => ref.read(filesGetProvider.notifier).goBack(false),
+                  onPressed: () => ref.read(filesGetProvider.notifier).goBack(isShared: false),
                 )
               : const SizedBox.shrink(),
           ref.watch(fileMoveProvider).moving

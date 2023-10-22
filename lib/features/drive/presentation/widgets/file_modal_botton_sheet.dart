@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:login_mobile/features/auth/presentation/providers/share_provider.dart';
-import 'package:login_mobile/features/drive/domain/entities/file.dart';
-import 'package:login_mobile/features/drive/presentation/providers/download_provider.dart';
-import 'package:login_mobile/features/drive/presentation/providers/file_move_provider.dart';
-import 'package:login_mobile/features/drive/presentation/providers/files_get_provider.dart';
+import 'package:login_mobile/features/drive/domain/entities/entities.dart';
+import 'package:login_mobile/features/drive/presentation/providers/providers.dart';
 import 'package:login_mobile/features/drive/presentation/screens/share_file_list_screen.dart';
 import 'package:login_mobile/features/shared/widgets/drive/dialog_rename_folder.dart';
 
