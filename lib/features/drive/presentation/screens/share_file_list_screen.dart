@@ -67,7 +67,7 @@ class ShareFileListScreen extends ConsumerWidget {
                 ),
                 const Divider(),
                 Expanded(
-                  child: shareUsersState.shareList.isEmpty
+                  child: shareUsersState.shareListWithWho.isEmpty
                       ? const Center(
                           child: Text('This folder is empty'),
                         )
@@ -76,9 +76,9 @@ class ShareFileListScreen extends ConsumerWidget {
                           crossAxisCount: 1,
                           mainAxisSpacing: 1,
                           crossAxisSpacing: 4,
-                          itemCount: shareUsersState.shareList.length,
+                          itemCount: shareUsersState.shareListWithWho.length,
                           itemBuilder: (context, index) {
-                            final shareData = shareUsersState.shareList[index];
+                            final shareData = shareUsersState.shareListWithWho[index];
                             return Column(
                               children: [
                                 ListTile(

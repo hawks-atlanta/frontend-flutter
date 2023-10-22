@@ -43,7 +43,7 @@ class CapyDriveScreen extends ConsumerWidget {
           ref.watch(filesGetProvider).locationHistory.isNotEmpty
               ? IconButton(
                   icon: const Icon(Icons.arrow_back),
-                  onPressed: () => ref.read(filesGetProvider.notifier).goBack(),
+                  onPressed: () => ref.read(filesGetProvider.notifier).goBack(false),
                 )
               : const SizedBox.shrink(),
           ref.watch(fileMoveProvider).moving
@@ -57,7 +57,7 @@ class CapyDriveScreen extends ConsumerWidget {
       ),
       body: Stack(
         children: [
-          const FilesView(),
+          const UnifiedFilesView(),
           // Si hay archivos que se están cargando, mostramos el CircularProgressIndicator
           if (uploadState.uploads
               .any((upload) => upload.fileStatus == FileUploadStatus.isLoading))

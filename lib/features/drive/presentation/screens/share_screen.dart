@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:login_mobile/features/drive/presentation/providers/files_get_provider.dart';
+import 'package:login_mobile/features/drive/presentation/widgets/files_view.dart';
 import 'package:login_mobile/features/shared/shared.dart';
 
 class ShareScreen extends ConsumerWidget {
@@ -22,20 +24,16 @@ class ShareScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Shared 𐃶'),
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.search_rounded))
+          ref.watch(filesGetProvider).locationHistory.isNotEmpty
+              ? IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () => ref.read(filesGetProvider.notifier).goBack(true),
+                )
+              : const SizedBox.shrink(),
         ],
       ),
-      body: const _ListShareView(),
+      body: const UnifiedFilesView(isShareList: true),
    
     );
-  }
-}
-
-class _ListShareView extends StatelessWidget {
-  const _ListShareView();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text('Share View'));
   }
 }

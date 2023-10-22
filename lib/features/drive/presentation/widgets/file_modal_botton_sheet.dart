@@ -78,7 +78,7 @@ class FileModalBottomSheet extends ConsumerWidget {
           leading: const Icon(Icons.share),
           title: const Text('Share'),
           onTap: () {
-            ref.watch(shareProvider.notifier).getShareList(file.uuid);
+            ref.watch(shareProvider.notifier).getShareListWithWho(file.uuid);
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) =>
                     ShareFileListScreen(fileUUID: file.uuid)));

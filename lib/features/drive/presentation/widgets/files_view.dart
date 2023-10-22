@@ -5,23 +5,30 @@ import 'package:login_mobile/features/drive/presentation/providers/files_get_pro
 import 'package:login_mobile/features/drive/presentation/widgets/file_folder_widget.dart';
 import 'package:login_mobile/features/drive/presentation/widgets/file_list_view.dart';
 
-class FilesView extends ConsumerStatefulWidget {
-  const FilesView({super.key});
+class UnifiedFilesView extends ConsumerStatefulWidget {
+  final bool isShareList;
+
+  const UnifiedFilesView({Key? key, this.isShareList = false})
+      : super(key: key);
 
   @override
-  FilesViewState createState() => FilesViewState();
+  UnifiedFilesViewState createState() => UnifiedFilesViewState();
 }
 
-class FilesViewState extends ConsumerState<FilesView> {
+class UnifiedFilesViewState extends ConsumerState<UnifiedFilesView> {
   int stateCrossAxis = 1;
-
-  final ScrollController _scrollController =
-      ScrollController(); //infinite scroll
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => ref.read(filesGetProvider.notifier).getFiles());
+
+    if (widget.isShareList) {
+      Future.microtask(
+          () => ref.read(filesGetProvider.notifier).getFilesShareList());
+    } else {
+      Future.microtask(() => ref.read(filesGetProvider.notifier).getFiles());
+    }
   }
 
   @override
@@ -38,8 +45,8 @@ class FilesViewState extends ConsumerState<FilesView> {
 
   @override
   Widget build(BuildContext context) {
-    final filesState = ref.watch(filesGetProvider);
-
+    final FilesGetState filesStateList = ref.watch(filesGetProvider);
+    
     return Scaffold(
       body: Column(
         children: [
@@ -52,8 +59,8 @@ class FilesViewState extends ConsumerState<FilesView> {
                   onPressed: toggleCrossAxisCount,
                   style: ButtonStyle(
                     shape: MaterialStateProperty.all<CircleBorder>(
-                        const CircleBorder()), // Sin borde
-                    elevation: MaterialStateProperty.all(0), // Sin elevación
+                        const CircleBorder()),
+                    elevation: MaterialStateProperty.all(0),
                     backgroundColor:
                         MaterialStateProperty.all(Colors.transparent),
                     overlayColor: MaterialStateProperty.resolveWith<Color>(
@@ -75,49 +82,30 @@ class FilesViewState extends ConsumerState<FilesView> {
           ),
           const SizedBox(height: 1),
           Flexible(
-            child: filesState.files.isEmpty
-                ? const Center(
-                    child: Center(child: Text('This folder is empty')),
-                  )
+            child: filesStateList.files.isEmpty
+                ? const Center(child: Text('This folder is empty'))
                 : Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: stateCrossAxis == 1
-                        ? MasonryGridView.count(
-                            physics: const BouncingScrollPhysics(),
-                            crossAxisCount: stateCrossAxis,
-                            mainAxisSpacing: 1,
-                            crossAxisSpacing: 4,
-                            itemCount: filesState.files.length,
-                            itemBuilder: (context, index) {
-                              final fileData = filesState.files[index];
-                              return GestureDetector(
-                                onTap: fileData.isFile
-                                    ? null
-                                    : () => ref
-                                        .read(filesGetProvider.notifier)
-                                        .goLocation(fileData.uuid),
-                                child: FileOrFolderWidget(file: fileData),
-                              );
-                            },
-                          )
-                        : MasonryGridView.count(
-                            physics: const BouncingScrollPhysics(),
-                            crossAxisCount: stateCrossAxis,
-                            mainAxisSpacing: 1,
-                            crossAxisSpacing: 1,
-                            itemCount: filesState.files.length,
-                            itemBuilder: (context, index) {
-                              final fileData = filesState.files[index];
-                              return GestureDetector(
-                                onTap: fileData.isFile
-                                    ? null
-                                    : () => ref
-                                        .read(filesGetProvider.notifier)
-                                        .goLocation(fileData.uuid),
-                                child: FilesTwoColumnsView(file: fileData),
-                              );
-                            },
-                          )
+                    child: MasonryGridView.count(
+                      physics: const BouncingScrollPhysics(),
+                      crossAxisCount: stateCrossAxis,
+                      mainAxisSpacing: 1,
+                      crossAxisSpacing: 4,
+                      itemCount: filesStateList.files.length,
+                      itemBuilder: (context, index) {
+                        final fileData = filesStateList.files[index];
+                        return GestureDetector(
+                          onTap: fileData.isFile
+                              ? null
+                              : () => ref
+                                  .read(filesGetProvider.notifier)
+                                  .goLocation(fileData.uuid),
+                          child: stateCrossAxis == 1
+                              ? FileOrFolderWidget(file: fileData)
+                              : FilesTwoColumnsView(file: fileData),
+                        );
+                      },
+                    ),
                   ),
           ),
         ],

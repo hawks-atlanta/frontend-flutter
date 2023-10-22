@@ -57,7 +57,7 @@ class FilesGetNotifier extends StateNotifier<FilesGetState> {
     getFiles();
   }
 
-  void goBack() {
+  void goBack(bool isShared) {
     print('Going back. Current history: ${state.locationHistory}');
     if ((state.locationHistory).isEmpty) {
       print('No more locations in history, navigating to root');
@@ -74,7 +74,11 @@ class FilesGetNotifier extends StateNotifier<FilesGetState> {
     }
     state = state.copyWith(location: state.location);
     // Llama a getFiles solo después de actualizar la ubicación
-    getFiles();
+    if (isShared) {
+      getFilesShareList();
+    } else {
+      getFiles();
+    }
   }
 
   createDirectory(String directoryName) async {
@@ -98,6 +102,13 @@ class FilesGetNotifier extends StateNotifier<FilesGetState> {
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  Future<List<File>> getFilesShareList() async {
+    final response = await filesRepository.getShareList();
+    final filesShareList = response;
+    state = state.copyWith(files: filesShareList);
+    return filesShareList;
   }
 }
 

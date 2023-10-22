@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:login_mobile/features/auth/infrastructure/infrastructure.dart';
+import 'package:login_mobile/features/drive/domain/entities/file.dart';
 import 'package:login_mobile/features/drive/domain/repositories/file_repository.dart';
 import 'package:login_mobile/features/drive/presentation/providers/files_upload_repository_provider.dart';
 
@@ -32,9 +33,9 @@ class ShareNotifier extends StateNotifier<ShareState> {
   shareListWithWho(String fileUUID) async {
     state = state.copyWith(isLoading: true);
     try {
-      final shareList = await fileRepository.shareListWithWho(fileUUID);
+      final shareListWithWho = await fileRepository.shareListWithWho(fileUUID);
       state = state.copyWith(isLoading: false, fileUUID: fileUUID);
-      return shareList;
+      return shareListWithWho;
     } on CustomError catch (e) {
       state = state.copyWith(
           isLoading: false, errorMessage: e.message, fileUUID: fileUUID);
@@ -44,11 +45,11 @@ class ShareNotifier extends StateNotifier<ShareState> {
     }
   }
 
-  Future<List<String>> getShareList(String fileUUID) async {
+  Future<List<String>> getShareListWithWho(String fileUUID) async {
     final response = await fileRepository.shareListWithWho(fileUUID);
-    final shareList = response.usernames;
-    state = state.copyWith(shareList: shareList);
-    return shareList;
+    final shareListWithWho = response.usernames;
+    state = state.copyWith(shareListWithWho: shareListWithWho);
+    return shareListWithWho;
   }
 }
 
@@ -58,7 +59,7 @@ class ShareState {
   final bool isShared;
   final String errorMessage;
   final String? fileUUID;
-  final List<String> shareList;
+  final List<String> shareListWithWho;
 
   ShareState({
     this.isLoading = false,
@@ -66,7 +67,7 @@ class ShareState {
     this.isShared = false,
     this.errorMessage = '',
     this.fileUUID,
-    this.shareList = const [],
+    this.shareListWithWho = const [],
   });
 
   factory ShareState.initial() {
@@ -76,7 +77,7 @@ class ShareState {
       isShared: false,
       errorMessage: '',
       fileUUID: null,
-      shareList: [],
+      shareListWithWho: [],
     );
   }
 
@@ -86,7 +87,8 @@ class ShareState {
     bool? isShared,
     String? errorMessage,
     String? fileUUID,
-    List<String>? shareList,
+    List<String>? shareListWithWho,
+    List<File>? filesShareList,
   }) {
     return ShareState(
       isLoading: isLoading ?? this.isLoading,
@@ -94,7 +96,7 @@ class ShareState {
       isShared: isShared ?? this.isShared,
       errorMessage: errorMessage ?? this.errorMessage,
       fileUUID: fileUUID ?? this.fileUUID,
-      shareList: shareList ?? this.shareList,
+      shareListWithWho: shareListWithWho ?? this.shareListWithWho,
     );
   }
 }
