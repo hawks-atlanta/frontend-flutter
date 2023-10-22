@@ -58,4 +58,9 @@ class FilesRepositoryImpl extends FilesRepository {
   Future<ShareListWhoResponse> shareListWithWho(String fileUUID) {
     return dataSource.shareListWithWho(fileUUID);
   }
+
+  @override
+  Future<List<File>> getShareList() {
+    return dataSource.getShareList();
+  }
 }

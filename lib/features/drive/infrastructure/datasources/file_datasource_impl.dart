@@ -11,6 +11,7 @@ import 'package:login_mobile/features/drive/infrastructure/mappers/file_list_map
 import 'package:login_mobile/features/drive/infrastructure/mappers/file_move_mapper.dart';
 import 'package:login_mobile/features/drive/infrastructure/mappers/file_new_dir_mapper.dart';
 import 'package:login_mobile/features/drive/infrastructure/mappers/file_rename_mapper.dart';
+import 'package:login_mobile/features/drive/infrastructure/mappers/file_share_list_mapper.dart';
 import 'package:login_mobile/features/drive/infrastructure/mappers/file_upload_mapper.dart';
 import 'package:login_mobile/features/drive/infrastructure/mappers/share_list_withwho.dart';
 
@@ -242,6 +243,30 @@ class FilesDatasourceImpl extends FileDataSource {
       final response = await dio.post('/share/list/with/who', data: data);
       if (response.statusCode == 200) {
         return ShareListWhoMapper.fileJsonToEntity(response.data);
+      } else {
+        throw Exception('Error');
+      }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        throw CustomError('Token Wrong');
+      }
+      if (e.type == DioExceptionType.connectionTimeout) {
+        throw CustomError('Review your internet connection');
+      }
+      throw Exception(e.toString());
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+  
+  @override
+  Future<List<File>> getShareList() async {
+    try {
+      Map<String, dynamic> data = {'token': accessToken};
+      final  response = await dio.post('/share/list', data: data);
+      if (response.statusCode == 200) {
+        List<File> files = ShareListMapper.fromJson(response.data);
+        return files;
       } else {
         throw Exception('Error');
       }

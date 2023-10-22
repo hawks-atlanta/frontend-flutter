@@ -17,4 +17,5 @@ abstract class FileDataSource {
   Future<MoveFileResponse> moveFile(String fileUUID, String targetDirectoryUUID);
   Future shareFile(String fileUUID, String otherUsername);
   Future<ShareListWhoResponse> shareListWithWho(String fileUUID);
+  Future<List<File>> getShareList();
 }
