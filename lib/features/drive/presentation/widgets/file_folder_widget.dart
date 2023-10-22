@@ -7,6 +7,7 @@ import 'package:login_mobile/features/drive/presentation/providers/file_move_pro
 import 'package:login_mobile/features/drive/presentation/providers/files_get_provider.dart';
 import 'package:login_mobile/features/drive/presentation/screens/share_file_list_screen.dart';
 import 'package:login_mobile/features/shared/widgets/drive/dialog_rename_folder.dart';
+import 'package:login_mobile/features/shared/infrastructure/inputs/format_bytes.dart';
 
 class FileOrFolderWidget extends ConsumerStatefulWidget {
   final File file;
@@ -27,7 +28,23 @@ class FileOrFolderWidgetState extends ConsumerState<FileOrFolderWidget> {
       child: ListTile(
         leading:
             Icon(widget.file.isFile ? Icons.insert_drive_file : Icons.folder),
-        title: Text(widget.file.name),
+        title: Column(
+          crossAxisAlignment:
+              CrossAxisAlignment.start, // Alinea el texto a la izquierda
+          children: [
+            Text(widget.file.name),
+            const SizedBox(height: 4.0),
+            widget.file.isFile
+                ? Text(
+                    'Size: ${formatBytes(widget.file.size, 2)}',
+                    style: TextStyle(
+                      fontSize: 12.0,
+                      color: Colors.grey[600],
+                    ),
+                  )
+                : Container(),
+          ],
+        ),
         //onTap: () => context.go('/folder/${file.uuid}'),
         trailing: IconButton(
           icon: const Icon(Icons.more_vert),
@@ -107,13 +124,6 @@ class FileOrFolderWidgetState extends ConsumerState<FileOrFolderWidget> {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => ShareFileListScreen(
                                 fileUUID: widget.file.uuid)));
-                      },
-                    ),
-                    ListTile(
-                      leading: const Icon(Icons.stop_screen_share_outlined),
-                      title: const Text('UnShare'),
-                      onTap: () {
-                        // Lógica para descompartir
                       },
                     ),
                   ],

@@ -3,7 +3,7 @@ class File {
   final String name;
   final String? extension;
   final bool isFile;
-  final String size;
+  final int size;
 
   File({
     required this.uuid,
@@ -19,7 +19,7 @@ class File {
         name: json['name'],
         extension: json['extension'].toString(),
         isFile: json['isFile'],
-        size: json['size'].toString() // Convertimos el número a double
+        size: json['size']
         );
   }
 }
