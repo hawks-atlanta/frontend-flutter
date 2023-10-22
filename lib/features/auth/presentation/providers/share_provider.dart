@@ -19,6 +19,7 @@ class ShareNotifier extends StateNotifier<ShareState> {
     try {
       await fileRepository.shareFile(fileUUID, otherUsername);
       state = state.copyWith(isSharing: false, isShared: true);
+      getShareListWithWho(fileUUID);
     } on CustomError catch (e) {
       state = state.copyWith(
           isSharing: false, isShared: false, errorMessage: e.message);
@@ -48,7 +49,8 @@ class ShareNotifier extends StateNotifier<ShareState> {
   Future<List<String>> getShareListWithWho(String fileUUID) async {
     final response = await fileRepository.shareListWithWho(fileUUID);
     final shareListWithWho = response.usernames;
-    state = state.copyWith(shareListWithWho: shareListWithWho);
+    state =
+        state.copyWith(shareListWithWho: shareListWithWho, errorMessage: '');
     return shareListWithWho;
   }
 }
