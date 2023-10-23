@@ -5,10 +5,12 @@ import 'package:login_mobile/features/drive/presentation/widgets/file_modal_bott
 
 class FilesTwoColumnsView extends ConsumerStatefulWidget {
   final File file;
+  final bool isShareList;
 
   const FilesTwoColumnsView({
     super.key,
     required this.file,
+    this.isShareList = false,
   });
 
   @override
@@ -63,18 +65,20 @@ class FileOrFolderWidgetState extends ConsumerState<FilesTwoColumnsView> {
             Positioned(
               bottom: 0,
               right: 0,
-              child: IconButton(
-                icon: const Icon(Icons.more_vert),
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (context) {
-                      //print(widget.file.uuid);
-                      return FileModalBottomSheet(file: widget.file);
-                    },
-                  );
-                },
-              ),
+              child: widget.isShareList
+                  ? const SizedBox.shrink()
+                  : IconButton(
+                      icon: const Icon(Icons.more_vert),
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (context) {
+                            //print(widget.file.uuid);
+                            return FileModalBottomSheet(file: widget.file);
+                          },
+                        );
+                      },
+                    ),
             ),
           ],
         ),

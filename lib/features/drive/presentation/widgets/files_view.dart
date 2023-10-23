@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:login_mobile/features/drive/presentation/providers/files_get_provider.dart';
-import 'package:login_mobile/features/drive/presentation/widgets/file_folder_widget.dart';
-import 'package:login_mobile/features/drive/presentation/widgets/file_list_view.dart';
+import 'package:login_mobile/features/drive/presentation/widgets/file_or_folder_widget.dart';
+import 'package:login_mobile/features/drive/presentation/widgets/files_two_columns_view.dart';
 
 class UnifiedFilesView extends ConsumerStatefulWidget {
   final bool isShareList;
@@ -101,8 +101,8 @@ class UnifiedFilesViewState extends ConsumerState<UnifiedFilesView> {
                                   .read(filesGetProvider.notifier)
                                   .goLocation(fileData.uuid),
                           child: stateCrossAxis == 1
-                              ? FileOrFolderWidget(file: fileData)
-                              : FilesTwoColumnsView(file: fileData),
+                              ? FileOrFolderWidget(file: fileData, isShareList: widget.isShareList)
+                              : FilesTwoColumnsView(file: fileData, isShareList: widget.isShareList),
                         );
                       },
                     ),
