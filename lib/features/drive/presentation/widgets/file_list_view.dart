@@ -69,7 +69,7 @@ class FileOrFolderWidgetState extends ConsumerState<FilesTwoColumnsView> {
                   showModalBottomSheet(
                     context: context,
                     builder: (context) {
-                      print(widget.file.uuid);
+                      //print(widget.file.uuid);
                       return FileModalBottomSheet(file: widget.file);
                     },
                   );

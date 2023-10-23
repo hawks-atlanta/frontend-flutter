@@ -16,19 +16,28 @@ class CapyDriveScreen extends ConsumerWidget {
     ));
   }
 
+  void listenForErrors(
+      BuildContext context, WidgetRef ref, ProviderBase provider) {
+    ref.listen(provider, (previous, next) {
+      final errorMessage = (next as dynamic).errorMessage as String?;
+      if (errorMessage == null || errorMessage.isEmpty) return;
+      showSnackbar(context, errorMessage);
+    });
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final scaffoldKey = GlobalKey<ScaffoldState>();
     final uploadState = ref.watch(filesProvider);
     final movingFileState = ref.read(fileMoveProvider).moving;
 
-    ref.listen(filesProvider, (previous, next) {
-      if (next.errorMessage.isEmpty) return;
-      showSnackbar(context, next.errorMessage);
-    });
+    listenForErrors(context, ref, filesProvider);
+    listenForErrors(context, ref, filesGetProvider);
+    listenForErrors(context, ref, fileMoveProvider);
+    listenForErrors(context, ref, fileMoveProvider);
 
-    final location = ref.read(filesGetProvider).location;
-    print("Location in CapyDriveScreen: $location");
+    //final location = ref.read(filesGetProvider).location;
+    //print("Location in CapyDriveScreen: $location");
 
     return Scaffold(
       // Operador logico, si está en moviendo archivo muestra el widget para cancelar el mover archivo si no se está moviendo muestra el drawer
@@ -41,7 +50,9 @@ class CapyDriveScreen extends ConsumerWidget {
           ref.watch(filesGetProvider).locationHistory.isNotEmpty
               ? IconButton(
                   icon: const Icon(Icons.arrow_back),
-                  onPressed: () => ref.read(filesGetProvider.notifier).goBack(isShared: false),
+                  onPressed: () => ref
+                      .read(filesGetProvider.notifier)
+                      .goBack(isShared: false),
                 )
               : const SizedBox.shrink(),
           ref.watch(fileMoveProvider).moving
@@ -70,8 +81,7 @@ class CapyDriveScreen extends ConsumerWidget {
       ),
       // operador lógico si el state de move file es en true muestra el widget para mover file en la location actual
       //le paso el location actual para que sepa en que carpeta se encuentra y el state de true lo que haría es enviar el uuid del archivo a mover
-      floatingActionButton:
-      FloatingActionButton.extended(
+      floatingActionButton: FloatingActionButton.extended(
         label:
             movingFileState ? const Text("Move Here") : const Icon(Icons.add),
         onPressed: movingFileState
@@ -87,7 +97,6 @@ class CapyDriveScreen extends ConsumerWidget {
                 showNewModal(context, ref);
               },
       ),
-
     );
   }
 }

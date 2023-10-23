@@ -11,8 +11,26 @@ class FileModalBottomSheet extends ConsumerWidget {
 
   const FileModalBottomSheet({super.key, required this.file});
 
+  void showSnackbar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      backgroundColor: Colors.red,
+    ));
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen(filesDownloadProvider, (previous, next) {
+      if (next.errorMessage.isEmpty) return;
+      showSnackbar(context, next.errorMessage);
+    });
+
+    ref.listen(filesGetProvider, (previous, next) {
+      if (next.errorMessage.isEmpty) return;
+      showSnackbar(context, next.errorMessage);
+    });
+print(file.uuid); 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -39,6 +57,7 @@ class FileModalBottomSheet extends ConsumerWidget {
           // Lógica para renombrar
           //read.read(nombreProvider.notifier).renameFile(widget.file.uuid)
           onTap: () {
+            
             /*
                         final location = ref.read(filesGetProvider).location;
                         ref

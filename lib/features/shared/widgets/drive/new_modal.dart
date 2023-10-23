@@ -31,7 +31,13 @@ void showNewModal(BuildContext context, WidgetRef ref) {
                   onPress: () => showDialog(
                       context: context,
                       builder: (context) {
-                        return DialogWidget(title: 'New Folder', buttonTitle: 'Create', hintText: 'Untitled folder', onButtonPressed: (String value) => ref.read(filesGetProvider.notifier).createDirectory(value));  
+                        return DialogWidget(
+                            title: 'New Folder',
+                            buttonTitle: 'Create',
+                            hintText: 'Untitled folder',
+                            onButtonPressed: (String value) => ref
+                                .read(filesGetProvider.notifier)
+                                .createDirectory(value));
                       })),
               IconTextButton(
                   name: "Upload",
@@ -51,8 +57,7 @@ Future<void> handleFileUpload(
     allowMultiple: true,
   );
   final location = ref.watch(filesGetProvider).location;
-  print('Location in modal: $location');
-
+  //print('Location in modal: $location');
   if (result != null) {
     for (PlatformFile file in result.files) {
       // Verificar si file.bytes es null

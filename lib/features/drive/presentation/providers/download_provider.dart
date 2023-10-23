@@ -24,7 +24,6 @@ class FilesDownloadNotifier extends StateNotifier<FileDownloadState> {
     try {
       state = state.copyWith(isDownloading: true);
       final fileDownload = await filesRepository.downloadFile(fileUUID);
-      print(fileDownload.fileContent);
       state = state.copyWith(
         isDownloading: false,
         downloadSuccess: true,
@@ -33,7 +32,7 @@ class FilesDownloadNotifier extends StateNotifier<FileDownloadState> {
     } catch (e) {
       state = state.copyWith(
         isDownloading: false,
-        error: e.toString(),
+        errorMessage: e.toString(),
       );
     }
   }
@@ -46,10 +45,12 @@ class FilesDownloadNotifier extends StateNotifier<FileDownloadState> {
       final filePath = '$path/${fileDownload.fileName}';
       File file = File(filePath);
       await file.writeAsBytes(decodedBytes);
-      print('File saved at $filePath');
       _showNotification(filePath);
     } catch (e) {
-      print(e);
+      state = state.copyWith(
+        isDownloading: false,
+        errorMessage: e.toString(),
+      );
     }
   }
 
@@ -98,9 +99,10 @@ class FilesDownloadNotifier extends StateNotifier<FileDownloadState> {
         }
       }
     } catch (err, stack) {
-      print("Cannot get download folder path");
-      print(err);
-      print(stack);
+      state = state.copyWith(
+        isDownloading: false,
+        errorMessage: err.toString() + stack.toString(),
+      );
     }
     return directory?.path;
   }
@@ -109,13 +111,13 @@ class FilesDownloadNotifier extends StateNotifier<FileDownloadState> {
 class FileDownloadState {
   final bool isDownloading;
   final double progress;
-  final String? error;
+  final String errorMessage;
   final bool downloadSuccess;
 
   FileDownloadState({
     required this.isDownloading,
     required this.progress,
-    this.error,
+    this.errorMessage = '',
     this.downloadSuccess = false,
   });
 
@@ -129,13 +131,13 @@ class FileDownloadState {
   FileDownloadState copyWith({
     bool? isDownloading,
     double? progress,
-    String? error,
+    String? errorMessage,
     bool? downloadSuccess,
   }) {
     return FileDownloadState(
       isDownloading: isDownloading ?? this.isDownloading,
       progress: progress ?? this.progress,
-      error: error ?? this.error,
+      errorMessage: errorMessage ?? this.errorMessage,
       downloadSuccess: downloadSuccess ?? this.downloadSuccess,
     );
   }

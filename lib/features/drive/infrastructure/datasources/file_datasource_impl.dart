@@ -29,7 +29,7 @@ class FilesDatasourceImpl extends FileDataSource {
         throw CustomError('Token Wrong');
       }
       if (e.response?.statusCode == 409) {
-        throw CustomError('File already exists in this location');
+        throw CustomError('File $fileName already exists in this location');
       }
       if (e.type == DioExceptionType.connectionTimeout) {
         throw CustomError('Review your internet connection');
@@ -110,6 +110,9 @@ class FilesDatasourceImpl extends FileDataSource {
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
         throw CustomError('Token Wrong');
+      }
+      if (e.response?.statusCode == 409) {
+        throw CustomError('Directory $directoryName already exists');
       }
       if (e.type == DioExceptionType.connectionTimeout) {
         throw CustomError('Review your internet connection');
@@ -206,7 +209,6 @@ class FilesDatasourceImpl extends FileDataSource {
       data['fileUUID'] = fileUUID;
       data['otherUsername'] = otherUsername;
       final response = await dio.post('/share/file', data: data);
-      print(response.data);
       if (response.statusCode == 204) {
         return true;
       } else {

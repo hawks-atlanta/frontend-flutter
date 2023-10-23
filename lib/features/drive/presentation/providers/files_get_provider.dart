@@ -46,9 +46,9 @@ class FilesGetNotifier extends StateNotifier<FilesGetState> {
         locationHistory: newLocationHistory,
       );
     } on CustomError catch (e) {
-      print(e.message);
+      state = state.copyWith(errorMessage: e.message);
     } catch (e) {
-      print(e.toString());
+      state = state.copyWith(errorMessage: e.toString());
     }
   }
 
@@ -87,9 +87,9 @@ class FilesGetNotifier extends StateNotifier<FilesGetState> {
           location: state.location);
       getFiles();
     } on CustomError catch (e) {
-      print(e.message);
+      state = state.copyWith(errorMessage: e.message);
     } catch (e) {
-      print(e.toString());
+      state = state.copyWith(errorMessage: e.toString());
     }
   }
 
@@ -98,9 +98,9 @@ class FilesGetNotifier extends StateNotifier<FilesGetState> {
       await filesRepository.renameFile(fileUUID, newName);
       getFiles();
     } on CustomError catch (e) {
-      print(e.message);
+      state = state.copyWith(errorMessage: e.message);
     } catch (e) {
-      print(e.toString());
+      state = state.copyWith(errorMessage: e.toString());
     }
   }
 
@@ -117,12 +117,14 @@ class FilesGetState {
   final List<File> files;
   final String? location;
   final List<String> locationHistory;
+  final String errorMessage;
 
   FilesGetState({
     this.isLoading = false,
     this.files = const [],
     this.location, //por default null es la raiz "/"
     this.locationHistory = const [],
+    this.errorMessage = '',
   });
 
   FilesGetState copyWith({
@@ -130,12 +132,14 @@ class FilesGetState {
     List<File>? files,
     String? location,
     List<String>? locationHistory,
+    String errorMessage = '',
   }) {
     return FilesGetState(
       isLoading: isLoading ?? this.isLoading,
       files: files ?? this.files,
       location: location ?? this.location,
       locationHistory: locationHistory ?? this.locationHistory,
+      errorMessage: errorMessage,
     );
   }
 }

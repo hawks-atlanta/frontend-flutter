@@ -46,7 +46,6 @@ class FileOrFolderWidgetState extends ConsumerState<FileOrFolderWidget> {
             showModalBottomSheet(
               context: context,
               builder: (context) {
-                print(widget.file.uuid);
                 return FileModalBottomSheet(file: widget.file);
               },
             );

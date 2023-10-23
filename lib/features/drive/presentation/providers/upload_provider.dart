@@ -78,7 +78,6 @@ class FilesUploadNotifier extends StateNotifier<FileUploadState> {
         _timers[fileUUID]?.cancel();
       }
     } catch (e) {
-      print(e);
       _timers[fileUUID]?.cancel();
       errorMsg(e.toString(), fileUUID, FileUploadStatus.error);
     }

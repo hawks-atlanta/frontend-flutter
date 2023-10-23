@@ -35,7 +35,7 @@ class CustomFilledButton extends StatelessWidget {
             children: <Widget>[
               Text(text),
               if (icon != null)
-                Icon(icon), //TODO: Icon passed as parameter
+                Icon(icon),
             ]));
   }
 }

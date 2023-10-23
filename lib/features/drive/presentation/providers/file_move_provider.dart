@@ -20,22 +20,21 @@ class FileMoveNotifier extends StateNotifier<FileMoveState> {
       await filesRepository.moveFile(fileUUID, targetDirectoryUUID);
       state = state.copywith(movingStatus: MovingStatus.initial, moving: false);
     } on CustomError catch (e) {
-      print(e.message);
+      state = state.copywith(
+          movingStatus: MovingStatus.failed, errorMessage: e.message);
     } catch (e) {
-      print(e.toString());
+      state = state.copywith(
+          movingStatus: MovingStatus.failed, errorMessage: e.toString());
     }
   }
 
-  // Ver si es necesario hacer esto o con el constructor initial simplmente actua
   fileMoveInitial({String? fileMoveUUID}) {
     state = state.copywith(moving: true, fileMoveUUID: fileMoveUUID);
   }
 
   fileMoveCancel() {
     state = state.copywith(
-        movingStatus: MovingStatus.initial,
-        moving: false,
-        fileMoveUUID: '');
+        movingStatus: MovingStatus.initial, moving: false, fileMoveUUID: '');
   }
 }
 
@@ -44,13 +43,13 @@ enum MovingStatus { initial, loading, failed }
 class FileMoveState {
   final bool moving;
   final MovingStatus movingStatus;
-  final String? error;
+  final String? errorMessage;
   final String fileMoveUUID;
-  final String targetDirectoryUUID;
+  final String? targetDirectoryUUID;
 
   FileMoveState({
     this.movingStatus = MovingStatus.initial,
-    this.error,
+    this.errorMessage = '',
     this.targetDirectoryUUID = '',
     this.fileMoveUUID = '',
     this.moving = false,
@@ -58,14 +57,14 @@ class FileMoveState {
 
   FileMoveState copywith({
     MovingStatus? movingStatus,
-    String? error,
+    String? errorMessage,
     String? fileMoveUUID,
     String? targetDirectoryUUID,
     bool? moving,
   }) {
     return FileMoveState(
       movingStatus: movingStatus ?? this.movingStatus,
-      error: error ?? this.error,
+      errorMessage: errorMessage ?? this.errorMessage,
       fileMoveUUID: fileMoveUUID ?? this.fileMoveUUID,
       targetDirectoryUUID: targetDirectoryUUID ?? this.targetDirectoryUUID,
       moving: moving ?? this.moving,
