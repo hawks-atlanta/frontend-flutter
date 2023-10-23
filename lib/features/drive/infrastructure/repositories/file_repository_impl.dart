@@ -66,4 +66,9 @@ class FilesRepositoryImpl extends FilesRepository {
   Future<bool> accountPasswordChange(String oldPassword, String newPassword) {
     return dataSource.accountPasswordChange(oldPassword, newPassword);
   }
+  
+  @override
+  Future<bool> unShareFile(String fileUUID, String otherUsername) {
+    return dataSource.unShareFile(fileUUID, otherUsername);
+  }
 }
