@@ -110,6 +110,27 @@ class FilesGetNotifier extends StateNotifier<FilesGetState> {
     state = state.copyWith(files: filesShareList);
     return filesShareList;
   }
+
+  Future<bool> deleteFile(List<String> fileUUID) async {
+    removeFileFromfilesList(fileUUID); //Todo: remove here when delete endpoint is done
+    try {
+      final response = await filesRepository.deleteFile(fileUUID);
+      //TODO: using here removeFileFromfilesList(fileUUID);
+      return response;
+    } on CustomError catch (e) {
+      state = state.copyWith(errorMessage: e.message);
+      return false;
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString());
+      return false;
+    }
+  }
+
+  void removeFileFromfilesList(List<String> fileUUID) {
+    final files = state.files;
+    final newFiles = files.where((file) => !fileUUID.contains(file.uuid));
+    state = state.copyWith(files: newFiles.toList());
+  }
 }
 
 class FilesGetState {

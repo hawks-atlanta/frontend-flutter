@@ -42,7 +42,9 @@ class ShareNotifier extends StateNotifier<ShareState> {
           isLoading: false, errorMessage: e.message, fileUUID: fileUUID);
     } catch (e) {
       state = state.copyWith(
-          isLoading: false, errorMessage: 'Error when using ShareListWithWho $e', fileUUID: fileUUID);
+          isLoading: false,
+          errorMessage: 'Error when using ShareListWithWho $e',
+          fileUUID: fileUUID);
     }
   }
 
@@ -55,9 +57,11 @@ class ShareNotifier extends StateNotifier<ShareState> {
   }
 
   Future<bool> unShareFile(String fileUUID, String otherUsername) async {
-    removeUserFromShareList(otherUsername);
+    removeUserFromShareList(
+        otherUsername); //Todo: remove here when delete endpoint is done
     try {
       await fileRepository.unShareFile(fileUUID, otherUsername);
+      //TODO: using here removeUserFromShareList(otherUsername);
       return true;
     } on CustomError catch (e) {
       state = state.copyWith(errorMessage: e.message);
@@ -73,8 +77,6 @@ class ShareNotifier extends StateNotifier<ShareState> {
     updatedList.remove(username);
     state = state.copyWith(shareListWithWho: updatedList);
   }
-
-  
 }
 
 class ShareState {

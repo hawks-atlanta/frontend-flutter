@@ -71,4 +71,9 @@ class FilesRepositoryImpl extends FilesRepository {
   Future<bool> unShareFile(String fileUUID, String otherUsername) {
     return dataSource.unShareFile(fileUUID, otherUsername);
   }
+  
+  @override
+  Future<bool> deleteFile(List<String> fileUUID) {
+    return dataSource.deleteFile(fileUUID);
+  }
 }

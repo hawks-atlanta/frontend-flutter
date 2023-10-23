@@ -88,7 +88,7 @@ print(file.uuid);
           leading: const Icon(Icons.delete),
           title: const Text('Delete'),
           onTap: () {
-            // Lógica para borrar
+            ref.read(filesGetProvider.notifier).deleteFile([file.uuid]);
           },
         ),
         ListTile(

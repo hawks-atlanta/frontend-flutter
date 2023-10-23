@@ -300,7 +300,7 @@ class FilesDatasourceImpl extends FileDataSource {
       throw Exception(e.toString());
     }
   }
-  
+
   @override
   Future<bool> unShareFile(String fileUUID, String otherUsername) async {
     try {
@@ -321,6 +321,36 @@ class FilesDatasourceImpl extends FileDataSource {
         throw CustomError('Review your internet connection');
       }
       throw Exception(e.toString());
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<bool> deleteFile(List<String> fileUUID) async {
+    try {
+      Map<String, dynamic> data = {'token': accessToken};
+      data['fileUUID'] = fileUUID;
+      final response = await dio.post('/file/delete', data: data);
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception('Error');
+      }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 409) {
+        throw CustomError('File $fileUUID is shared');
+      }
+      if (e.response?.statusCode == 401) {
+        throw CustomError('Token Wrong');
+      }
+      if (e.response?.statusCode == 404) {
+        throw CustomError('File $fileUUID not found');
+      }
+      if (e.type == DioExceptionType.connectionTimeout) {
+        throw CustomError('Review your internet connection');
+      }
+      throw Exception(e);
     } catch (e) {
       throw Exception(e.toString());
     }
