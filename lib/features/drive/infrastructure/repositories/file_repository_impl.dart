@@ -61,4 +61,9 @@ class FilesRepositoryImpl extends FilesRepository {
   Future<List<File>> getShareList() {
     return dataSource.getShareList();
   }
+  
+  @override
+  Future accountPasswordChange(String oldPassword, String newPassword) {
+    return dataSource.accountPasswordChange(oldPassword, newPassword);
+  }
 }

@@ -65,7 +65,6 @@ class SideMenuState extends ConsumerState<SideMenu> {
           padding: const EdgeInsets.fromLTRB(20, 0, 16, 10),
           child: Text(authState.user?.username ?? 'Fallback Value',
               style: textStyles.titleSmall),
-
         ),
         const NavigationDrawerDestination(
           icon: Icon(Icons.folder),
@@ -104,6 +103,14 @@ class SideMenuState extends ConsumerState<SideMenu> {
                   icon: Icons.fingerprint,
                 ),
               ),
+        Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: CustomFilledButton(
+              onPressed: () {
+                ref.read(authProvider.notifier).logout();
+              },
+              text: 'Change Password',
+            )),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: CustomFilledButton(

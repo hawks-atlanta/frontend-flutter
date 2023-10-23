@@ -27,7 +27,7 @@ class ShareNotifier extends StateNotifier<ShareState> {
       state = state.copyWith(
           isSharing: false,
           isShared: false,
-          errorMessage: 'Confirm the username');
+          errorMessage: 'Invalid user or user not found');
     }
   }
 
@@ -42,7 +42,7 @@ class ShareNotifier extends StateNotifier<ShareState> {
           isLoading: false, errorMessage: e.message, fileUUID: fileUUID);
     } catch (e) {
       state = state.copyWith(
-          isLoading: false, errorMessage: 'Error.. TODO!', fileUUID: fileUUID);
+          isLoading: false, errorMessage: 'Error when using ShareListWithWho $e', fileUUID: fileUUID);
     }
   }
 

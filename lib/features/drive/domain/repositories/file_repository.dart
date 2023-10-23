@@ -11,9 +11,10 @@ abstract class FilesRepository {
       {String? location});
   Future<FileDownloadResponse> downloadFile(String fileUUID);
   Future<RenameFileResponse> renameFile(String fileUUID, String newName);
-  Future<MoveFileResponse> moveFile(String fileUUID, String targetDirectoryUUID);
+  Future<MoveFileResponse> moveFile(
+      String fileUUID, String targetDirectoryUUID);
   Future shareFile(String fileUUID, String otherUsername);
   Future<ShareListWhoResponse> shareListWithWho(String fileUUID);
   Future<List<File>> getShareList();
-
+  Future accountPasswordChange(String oldPassword, String newPassword);
 }

@@ -248,12 +248,12 @@ class FilesDatasourceImpl extends FileDataSource {
       throw Exception(e.toString());
     }
   }
-  
+
   @override
   Future<List<File>> getShareList() async {
     try {
       Map<String, dynamic> data = {'token': accessToken};
-      final  response = await dio.post('/share/list', data: data);
+      final response = await dio.post('/share/list', data: data);
       if (response.statusCode == 200) {
         List<File> files = ShareListMapper.fromJson(response.data);
         return files;
@@ -263,6 +263,26 @@ class FilesDatasourceImpl extends FileDataSource {
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
         throw CustomError('Token Wrong');
+      }
+      if (e.type == DioExceptionType.connectionTimeout) {
+        throw CustomError('Review your internet connection');
+      }
+      throw Exception(e.toString());
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future accountPasswordChange(String oldPassword, String newPassword) {
+    try {
+      Map<String, dynamic> data = {'token': accessToken};
+      data['oldPassword'] = oldPassword;
+      data['newPassword'] = newPassword;
+      return dio.put('/account/password/change', data: data);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        throw CustomError('OldPassword Wrong');
       }
       if (e.type == DioExceptionType.connectionTimeout) {
         throw CustomError('Review your internet connection');
