@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:login_mobile/features/auth/auth.dart';
 import 'package:login_mobile/features/auth/presentation/providers/auth_provider.dart';
+import 'package:login_mobile/features/auth/presentation/screens/account_password.dart';
 import 'package:login_mobile/features/drive/files_drive.dart';
 import 'app_router_notifier.dart';
 
@@ -37,6 +38,10 @@ final goRouterProvider = Provider((ref) {
         path: '/share',
         builder: (context, state) => const ShareScreen(),
       ),
+      GoRoute(
+        path: '/account/password',
+        builder: (context, state) => const AccountPasswordScreen(),
+      )
     ],
     redirect: (context, state) {
       final isGoingTo = state.matchedLocation;

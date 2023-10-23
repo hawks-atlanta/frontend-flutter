@@ -63,7 +63,7 @@ class FilesRepositoryImpl extends FilesRepository {
   }
   
   @override
-  Future accountPasswordChange(String oldPassword, String newPassword) {
+  Future<bool> accountPasswordChange(String oldPassword, String newPassword) {
     return dataSource.accountPasswordChange(oldPassword, newPassword);
   }
 }

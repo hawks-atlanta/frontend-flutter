@@ -274,12 +274,18 @@ class FilesDatasourceImpl extends FileDataSource {
   }
 
   @override
-  Future accountPasswordChange(String oldPassword, String newPassword) {
+  Future<bool> accountPasswordChange(
+      String oldPassword, String newPassword) async {
     try {
       Map<String, dynamic> data = {'token': accessToken};
       data['oldPassword'] = oldPassword;
       data['newPassword'] = newPassword;
-      return dio.put('/account/password/change', data: data);
+      final response = await dio.post('/account/password', data: data);
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception('Error');
+      }
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
         throw CustomError('OldPassword Wrong');

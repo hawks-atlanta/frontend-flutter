@@ -107,7 +107,7 @@ class SideMenuState extends ConsumerState<SideMenu> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: CustomFilledButton(
               onPressed: () {
-                ref.read(authProvider.notifier).logout();
+                ref.read(goRouterProvider).go('/account/password');
               },
               text: 'Change Password',
             )),

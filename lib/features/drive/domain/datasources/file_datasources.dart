@@ -19,5 +19,5 @@ abstract class FileDataSource {
   Future shareFile(String fileUUID, String otherUsername);
   Future<ShareListWhoResponse> shareListWithWho(String fileUUID);
   Future<List<File>> getShareList();
-  Future accountPasswordChange(String oldPassword, String newPassword);
+  Future<bool> accountPasswordChange(String oldPassword, String newPassword);
 }
