@@ -96,6 +96,7 @@ class SideMenuState extends ConsumerState<SideMenu> {
             : Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: CustomFilledButton(
+                  buttonColor: const Color.fromARGB(255, 29, 29, 29),
                   onPressed: () {
                     handleBiometricAuthentication(context);
                   },
@@ -106,6 +107,7 @@ class SideMenuState extends ConsumerState<SideMenu> {
         Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: CustomFilledButton(
+              buttonColor: const Color.fromARGB(255, 29, 29, 29),
               onPressed: () {
                 ref.read(goRouterProvider).go('/account/password');
               },
@@ -114,6 +116,7 @@ class SideMenuState extends ConsumerState<SideMenu> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: CustomFilledButton(
+            buttonColor: const Color.fromARGB(255, 29, 29, 29),
             onPressed: () {
               ref.read(authProvider.notifier).logout();
             },

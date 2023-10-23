@@ -27,7 +27,7 @@ void showNewModal(BuildContext context, WidgetRef ref) {
               IconTextButton(
                   name: "Folder",
                   color: Colors.white,
-                  icon: const Icon(Icons.file_upload),
+                  icon: const Icon(Icons.drive_folder_upload_outlined),
                   onPress: () => showDialog(
                       context: context,
                       builder: (context) {

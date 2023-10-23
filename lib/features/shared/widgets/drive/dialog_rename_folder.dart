@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:login_mobile/features/shared/shared.dart';
 
 class DialogWidget extends StatelessWidget {
   final String? title;
@@ -17,6 +18,8 @@ class DialogWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textStyles = Theme.of(context).textTheme;
+
     return AlertDialog(
       title: Text(title ?? ''),
       content: TextField(
@@ -26,11 +29,11 @@ class DialogWidget extends StatelessWidget {
         style: const TextStyle(fontSize: 16),
       ),
       actions: <Widget>[
-        FloatingActionButton(
+        TextButton(
           child: const Text('Cancel'),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        FloatingActionButton(
+        TextButton(
           child: Text(buttonTitle ?? ''),
           onPressed: () {
             if (_controller.text.isNotEmpty) {
