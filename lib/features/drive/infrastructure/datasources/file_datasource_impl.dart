@@ -307,7 +307,7 @@ class FilesDatasourceImpl extends FileDataSource {
       Map<String, dynamic> data = {'token': accessToken};
       data['fileUUID'] = fileUUID;
       data['otherUsername'] = otherUsername;
-      final response = await dio.delete('/unshare/file', data: data);
+      final response = await dio.post('/unshare/file', data: data);
       if (response.statusCode == 200) {
         return true;
       } else {

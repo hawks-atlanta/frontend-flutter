@@ -53,6 +53,28 @@ class ShareNotifier extends StateNotifier<ShareState> {
         state.copyWith(shareListWithWho: shareListWithWho, errorMessage: '');
     return shareListWithWho;
   }
+
+  Future<bool> unShareFile(String fileUUID, String otherUsername) async {
+    removeUserFromShareList(otherUsername);
+    try {
+      await fileRepository.unShareFile(fileUUID, otherUsername);
+      return true;
+    } on CustomError catch (e) {
+      state = state.copyWith(errorMessage: e.message);
+      return false;
+    } catch (e) {
+      state = state.copyWith(errorMessage: 'Error when using unShareFile $e');
+      return false;
+    }
+  }
+
+  void removeUserFromShareList(String username) {
+    final updatedList = List<String>.from(state.shareListWithWho);
+    updatedList.remove(username);
+    state = state.copyWith(shareListWithWho: updatedList);
+  }
+
+  
 }
 
 class ShareState {

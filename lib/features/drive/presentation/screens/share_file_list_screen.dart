@@ -78,15 +78,19 @@ class ShareFileListScreen extends ConsumerWidget {
                           crossAxisSpacing: 4,
                           itemCount: shareUsersState.shareListWithWho.length,
                           itemBuilder: (context, index) {
-                            final shareData = shareUsersState.shareListWithWho[index];
+                            final otherUsername =
+                                shareUsersState.shareListWithWho[index];
                             return Column(
                               children: [
                                 ListTile(
-                                  title: Text(shareData),
+                                  title: Text(otherUsername),
                                   trailing: IconButton(
                                     icon: const Icon(Icons.delete_outline),
                                     onPressed: () {
-                                      //!TODO: Agrega la lógica para borrar o cancelar
+                                      print("Sharedata $otherUsername");
+                                      ref
+                                          .read(shareProvider.notifier)
+                                          .unShareFile(fileUUID, otherUsername);
                                     },
                                   ),
                                 ),
