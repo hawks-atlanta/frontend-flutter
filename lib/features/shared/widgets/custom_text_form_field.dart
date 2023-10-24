@@ -11,6 +11,7 @@ class CustomTextFormField extends StatelessWidget {
   final Function(String)? onChanged;
   final String? Function(String?)? validator;
   final bool readOnly;
+  final Widget? suffixIcon;
 
   const CustomTextFormField({
     super.key, 
@@ -22,6 +23,7 @@ class CustomTextFormField extends StatelessWidget {
     this.onChanged, 
     this.validator,
     this.readOnly = false,
+    this.suffixIcon,
   });
 
   @override
@@ -68,6 +70,7 @@ class CustomTextFormField extends StatelessWidget {
           hintText: hint,
           errorText: errorMessage,
           focusColor: colors.primary,
+          suffixIcon: suffixIcon,
           // icon: Icon( Icons.supervised_user_circle_outlined, color: colors.primary, )
         ),
       ),
