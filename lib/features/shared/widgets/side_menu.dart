@@ -50,9 +50,9 @@ class SideMenuState extends ConsumerState<SideMenu> {
         });
         final goRouter = ref.read(goRouterProvider);
         if (value == 0) {
-          goRouter.go('/');
+          goRouter.go('/files');
         } else if (value == 1) {
-          goRouter.go('/storage');
+          goRouter.go('/share');
         }
         widget.scaffoldKey.currentState?.closeDrawer();
       },
@@ -65,15 +65,14 @@ class SideMenuState extends ConsumerState<SideMenu> {
           padding: const EdgeInsets.fromLTRB(20, 0, 16, 10),
           child: Text(authState.user?.username ?? 'Fallback Value',
               style: textStyles.titleSmall),
-
         ),
         const NavigationDrawerDestination(
           icon: Icon(Icons.folder),
           label: Text('Files'),
         ),
         const NavigationDrawerDestination(
-          icon: Icon(Icons.storage_outlined),
-          label: Text('Storage'),
+          icon: Icon(Icons.folder_shared),
+          label: Text('Share'),
         ),
         const Padding(
           padding: EdgeInsets.fromLTRB(28, 16, 28, 10),
@@ -97,6 +96,7 @@ class SideMenuState extends ConsumerState<SideMenu> {
             : Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: CustomFilledButton(
+                  buttonColor: const Color.fromARGB(255, 29, 29, 29),
                   onPressed: () {
                     handleBiometricAuthentication(context);
                   },
@@ -105,8 +105,18 @@ class SideMenuState extends ConsumerState<SideMenu> {
                 ),
               ),
         Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: CustomFilledButton(
+              buttonColor: const Color.fromARGB(255, 29, 29, 29),
+              onPressed: () {
+                ref.read(goRouterProvider).go('/account/password');
+              },
+              text: 'Change Password',
+            )),
+        Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: CustomFilledButton(
+            buttonColor: const Color.fromARGB(255, 29, 29, 29),
             onPressed: () {
               ref.read(authProvider.notifier).logout();
             },
