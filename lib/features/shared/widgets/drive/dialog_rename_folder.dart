@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:login_mobile/features/shared/shared.dart';
 
 class DialogWidget extends StatelessWidget {
   final String? title;
@@ -18,7 +17,7 @@ class DialogWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textStyles = Theme.of(context).textTheme;
+    //final textStyles = Theme.of(context).textTheme;
 
     return AlertDialog(
       title: Text(title ?? ''),

@@ -112,11 +112,15 @@ class FilesGetNotifier extends StateNotifier<FilesGetState> {
   }
 
   Future<bool> deleteFile(List<String> fileUUID) async {
-    removeFileFromfilesList(fileUUID); //Todo: remove here when delete endpoint is done
     try {
       final response = await filesRepository.deleteFile(fileUUID);
-      //TODO: using here removeFileFromfilesList(fileUUID);
-      return response;
+      if (response) {
+        removeFileFromfilesList(fileUUID);
+        return true;
+      } else {
+        state = state.copyWith(errorMessage: 'Failed to delete file');
+        return false;
+      }
     } on CustomError catch (e) {
       state = state.copyWith(errorMessage: e.message);
       return false;

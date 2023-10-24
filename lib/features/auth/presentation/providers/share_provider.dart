@@ -57,12 +57,18 @@ class ShareNotifier extends StateNotifier<ShareState> {
   }
 
   Future<bool> unShareFile(String fileUUID, String otherUsername) async {
-    removeUserFromShareList(
-        otherUsername); //Todo: remove here when delete endpoint is done
     try {
-      await fileRepository.unShareFile(fileUUID, otherUsername);
-      //TODO: using here removeUserFromShareList(otherUsername);
-      return true;
+      final response =
+          await fileRepository.unShareFile(fileUUID, otherUsername);
+      if (response) {
+        removeUserFromShareList(otherUsername);
+        state = state.copyWith(errorMessage: '');
+        return true;
+      } else {
+        state = state.copyWith(
+            errorMessage: 'Error when using unShareFile, response is false');
+      }
+      return false;
     } on CustomError catch (e) {
       state = state.copyWith(errorMessage: e.message);
       return false;

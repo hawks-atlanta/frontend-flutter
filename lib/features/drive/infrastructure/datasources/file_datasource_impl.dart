@@ -295,6 +295,8 @@ class FilesDatasourceImpl extends FileDataSource {
       if (e.type == DioExceptionType.connectionTimeout) {
         throw CustomError('Review your internet connection');
       }
+      
+      
       throw Exception(e.toString());
     } catch (e) {
       throw Exception(e.toString());
@@ -319,6 +321,9 @@ class FilesDatasourceImpl extends FileDataSource {
       }
       if (e.type == DioExceptionType.connectionTimeout) {
         throw CustomError('Review your internet connection');
+      }
+      if (e.response?.statusCode == 500) {
+        throw CustomError('Internal Server Error');
       }
       throw Exception(e.toString());
     } catch (e) {
@@ -345,7 +350,10 @@ class FilesDatasourceImpl extends FileDataSource {
         throw CustomError('Token Wrong');
       }
       if (e.response?.statusCode == 404) {
-        throw CustomError('File $fileUUID not found');
+        throw CustomError('File $fileUUID not found (Server)');
+      }
+      if (e.response?.statusCode == 500) {
+        throw CustomError('Internal Server Error');
       }
       if (e.type == DioExceptionType.connectionTimeout) {
         throw CustomError('Review your internet connection');
